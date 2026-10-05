@@ -1,0 +1,15 @@
+# Cinq's own dependencies only. examples/ (a sample app with its own stack) and backtest/ (evidence data) are not
+# part of Cinq and are left alone.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directories: ["/", "/app/worker"]
+    schedule:
+      interval: monthly
+    groups:
+      cinq:
+        patterns: ["*"]
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly

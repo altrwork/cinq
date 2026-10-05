@@ -7,6 +7,7 @@ Thanks for looking at Cinq. A few things keep changes easy to review:
   change how landing works, also run `npm run test:e2e` against your own deployment (`npx cinq-git deploy`).
 - **Keep it lean:** no new dependency without a reason in the PR, no abstraction with one caller, comments that say
   why rather than what.
+- **License:** contributions are accepted under the Apache License 2.0, the project's license.
 - **Security issues** go privately: see [SECURITY.md](SECURITY.md).
 
 Where things live: `app/cli` is the CLI, `app/worker` the Worker, Durable Objects and lander, `app/web` the dashboard,

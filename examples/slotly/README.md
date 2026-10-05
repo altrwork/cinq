@@ -1,7 +1,7 @@
 # Slotly
 
 A small booking app on Cloudflare Workers + D1 (Hono): businesses publish times, customers book them, everyone
-gets an email. It is the example repo for trying [Cinq](../../README.md).
+gets an email. It is the example repo for trying [Cinq](../../README.md): a sample app with its own dependencies (Hono, Workers, D1), not part of Cinq itself.
 
 ## Try Cinq on it
 
