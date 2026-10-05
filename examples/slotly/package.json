@@ -1,0 +1,15 @@
+{
+  "name": "slotly",
+  "private": true,
+  "version": "0.1.0",
+  "description": "A small booking app on Cloudflare Workers + D1: the example repo for trying Cinq.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test --no-warnings",
+    "dev": "wrangler dev",
+    "db:init": "wrangler d1 execute slotly --local --file schema.sql"
+  },
+  "dependencies": {
+    "hono": "4.6.14"
+  }
+}

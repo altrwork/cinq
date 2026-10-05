@@ -1,0 +1,8 @@
+--- a/src/format.js
++++ b/src/format.js
+@@ -1,3 +1,4 @@
+ export function formatMoney(amount) {
+-  return '$' + amount.toFixed(2);
++  const sign = amount < 0 ? '-' : '';
++  return sign + '$' + Math.abs(amount).toFixed(2);
+ }

@@ -1,0 +1,36 @@
+{
+  "run": "workflow-1",
+  "landed": 2,
+  "parked": null,
+  "rebuilt": null,
+  "tokens": 2607301,
+  "minutes": 6.3,
+  "run_summary": {
+    "results": [
+      {
+        "who": "maya",
+        "merged": true,
+        "rounds": 3
+      },
+      {
+        "who": "sam",
+        "merged": true,
+        "rounds": 1
+      }
+    ],
+    "mainGreen": true,
+    "sessions": 7,
+    "tokens": 2607301,
+    "costUsd": 3.47,
+    "byRole": {
+      "author": 1631338,
+      "reviewer": 247426,
+      "fixer": 728537
+    },
+    "minutes": 6.3
+  },
+  "raw": [
+    "console.log.gz",
+    "sessions.json.gz"
+  ]
+}

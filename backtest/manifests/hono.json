@@ -1,0 +1,651 @@
+{
+  "schema": 1,
+  "window": "hono",
+  "repo": "honojs/hono",
+  "from": "2026-08-22T00:00:00Z",
+  "to": "2026-08-27T23:59:59Z",
+  "why": "6 PRs on src/client/client.ts by 4 authors in 5 days; 4 merged within 26 minutes on Aug 22",
+  "frozenAt": "2026-10-01T23:02:03.099Z",
+  "base": {
+    "sha": "4b44abe1b5c7755aac8555d7943611555183450b",
+    "note": "parent of #5222's merge commit",
+    "date": "2026-08-20T04:34:28Z"
+  },
+  "end": {
+    "sha": "499c35ebda35777fd35a7dd1906dd4f2687da61e",
+    "note": "merge commit of #5291"
+  },
+  "lander": {
+    "test": {
+      "runner": "vitest",
+      "args": [
+        "--project",
+        "main"
+      ]
+    },
+    "install": "npm install --no-audit --no-fund --legacy-peer-deps"
+  },
+  "local": {
+    "install": {
+      "cmd": "npm",
+      "args": [
+        "install",
+        "--no-audit",
+        "--no-fund",
+        "--legacy-peer-deps"
+      ]
+    },
+    "test": {
+      "runner": "vitest",
+      "args": [
+        "--project",
+        "main"
+      ]
+    }
+  },
+  "notes": [
+    "Upstream ships bun.lock, which the lander does not read, so it falls back to npm install without a lockfile. Dependency versions can drift from upstream's (UNVERIFIED effect).",
+    "Measured on Windows/Node 22.23.3: --project main, 3,956 tests, 66 s; 1 compress streaming test timed out under load (the lander's one-re-run flake rule covers it)."
+  ],
+  "selectionRule": "merged in window; not bot; >=1 non-test source file; >=1 added/changed test file; no deps changes",
+  "prs": [
+    {
+      "number": 5222,
+      "url": "https://github.com/honojs/hono/pull/5222",
+      "title": "fix(etag): match If-None-Match tags with optional whitespace before the comma",
+      "author": "contactjawad",
+      "createdAt": "2026-08-12T15:34:41Z",
+      "mergedAt": "2026-08-22T04:41:16Z",
+      "mergeSha": "f8b7847d755d98009feb2d7d1e6dff0921f8c500",
+      "headSha": "134631d3663bb528f50ea5178bf8672c5798c989",
+      "prBaseSha": "26de73133b8552f56ba72e025ecd82b08900d796",
+      "files": [
+        {
+          "path": "src/middleware/etag/index.test.ts",
+          "status": "modified",
+          "additions": 8,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/middleware/etag/index.ts",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 1,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/middleware/etag/index.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/middleware/etag/index.test.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix(etag): match If-None-Match tags with optional whitespace before the comma\n\nFixes the ETag middleware so `If-None-Match` matches when optional whitespace precedes the comma in the tag list.\n\n## What\n\nThe ETag middleware returned `200` with the full body instead of `304 Not Modified` when a conditional request's `If-None-Match` header placed whitespace before a delimiting comma (e.g. `\"a\" , \"b\"`), even though the current ETag was present in the list.\n\n## Why\n\n`etagMatches` split the header with `/,\\s*/`, which only consumes whitespace *after* each comma. RFC 9110 defines `If-None-Match` as a `1#entity-tag` list, and the `#` list rule permits optional whitespace (OWS) on **both** sides of the delimiter. When OWS preceded a comma, the preceding tag kept a trailing space, so `stripWeak('\"abc\" ') !== stripWeak('\"abc\"')` and the match silently failed. Any tag not in the last list position was affected, causing an unnecessary full-body transfer instead of a cheap `304`.\n\nThe fix trims the header and splits on `/\\s*,\\s*/`, so OWS on either side of the comma is consumed. A regression test covers a matching tag with a space before the following comma.\n\n### The author should do the following, if applicable",
+      "leakage": {
+        "maxMatch": 0,
+        "flagged": false
+      }
+    },
+    {
+      "number": 5244,
+      "url": "https://github.com/honojs/hono/pull/5244",
+      "title": "fix(client): skip undefined header and cookie values",
+      "author": "Ersaoktaviannn",
+      "createdAt": "2026-08-15T19:56:58Z",
+      "mergedAt": "2026-08-22T05:13:48Z",
+      "mergeSha": "d6c0b0de163a3b709e4dc57de0e0e8581aa08b7b",
+      "headSha": "f372b33b859c96bab20e3c5cc216c4867d375dd6",
+      "prBaseSha": "41bdc4288ed7023c24d35f32bd065bd963435e3e",
+      "files": [
+        {
+          "path": "src/client/client.test.ts",
+          "status": "modified",
+          "additions": 69,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/client/client.ts",
+          "status": "modified",
+          "additions": 13,
+          "deletions": 3,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/client/client.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/client/client.test.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix(client): skip undefined header and cookie values\n\n## Summary\n\n- skip `undefined` values when building RPC client headers and cookies\n- avoid sending an empty `Cookie` header when every cookie value is omitted\n- add a typed end-to-end regression test for both paths\n\n## Impact\n\nOptional header and cookie fields accepted by Hono's inferred RPC types no longer arrive as the literal string `\"undefined\"`. Omitted values now remain absent, preventing request logic from mistaking them for values supplied by the caller.\n\n## Regression proof\n\nBefore this fix, the new test received:\n\n- `x-optional: undefined` as the header value `\"undefined\"`\n- `optional: undefined` as the cookie `optional=undefined`\n\nAfter this fix, the optional header is absent and only `required=cookie-value` is serialized. Required values remain unchanged.\n\n## Testing\n\n- `vitest --run src/client/client.test.ts`: 109 passed\n- `tsc -p tsconfig.spec.json --pretty false`\n- `eslint src/client/client.ts src/client/client.test.ts`\n- `prettier --check src/client/client.ts src/client/client.test.ts`\n- Full `npm test`: 4,766 passed; the unrelated local `workerd` startup hook timed out on Windows\n\n### The author should do the following, if applicable",
+      "leakage": {
+        "maxMatch": 0,
+        "flagged": false
+      }
+    },
+    {
+      "number": 5272,
+      "url": "https://github.com/honojs/hono/pull/5272",
+      "title": "fix(client): skip an undefined entry inside a query array",
+      "author": "MahathirMohammadShuvo",
+      "createdAt": "2026-08-20T16:37:56Z",
+      "mergedAt": "2026-08-22T05:26:13Z",
+      "mergeSha": "2059584f84187a688354956e0647269834ccf3a6",
+      "headSha": "188dc06a642016ddaf90988b18a1eb7e8c848e50",
+      "prBaseSha": "4b44abe1b5c7755aac8555d7943611555183450b",
+      "files": [
+        {
+          "path": "src/client/client.test.ts",
+          "status": "modified",
+          "additions": 25,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/client/utils.test.ts",
+          "status": "modified",
+          "additions": 21,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/client/utils.ts",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 0,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/client/utils.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/client/client.test.ts",
+          "src/client/utils.test.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix(client): skip an undefined entry inside a query array\n\n`buildSearchParams` skips a top-level `undefined` value, but the array branch\r\nappended every entry unconditionally. `URLSearchParams` stringifies, so the\r\nliteral string `\"undefined\"` went out on the wire:\r\n\r\n[diff-like code block removed]\r\n\r\n### It is reachable without a cast\r\n\r\n`InferInputInner` (`src/validator/utils.ts:31-33`) passes the schema type through\r\nverbatim when the field is an optional union, so a route validated with the\r\nequivalent of `z.array(z.string().optional()).optional()` gives the client an\r\ninput type of `(string | undefined)[] | undefined`. This type checks today:\r\n\r\n```ts\r\nawait client.search.$get({ query: { tag: ['a', undefined, 'b'] } })\r\n// GET /search?tag=a&tag=undefined&tag=b\r\n```\r\n\r\nThat is the case in the added `client.test.ts` test — no cast on the call.\r\n\r\n### Scope\r\n\r\nAn `undefined` array entry is now skipped, matching the guard three lines above\r\nit. An empty string is still sent (`tag=a&tag=&tag=b`), so this is deliberately\r\n`=== undefined` rather than falsy.\r\n\r\n`null` is untouched and still serialises as the string `\"null\"`. That is\r\npre-existing and symmetric with the top-level branch, which does the same;\r\ndropping it would be a behaviour change nobody asked for.\r\n\r\n### Two related things I did not fold in\r\n\r\n- **`$ws`** had the same problem and is already being fixed in #5256, which\r\n  routes it through `buildSearchParams`. That PR does not change the array\r\n  branch, so `$ws` will still emit `tag=undefined` for an array entry until this\r\n  one lands — the two are complementary, and I have deliberately left\r\n  `client.ts` alone here to avoid conflicting with it.\r\n- **`form`** (`src/client/client.ts:70-73`) has the identical asymmetry: the\r\n  top-level `undefined` guard is there, the array entries are appended\r\n  unguarded, so `{ form: { tag: ['a', undefined, 'b'] } }` sends `\"undefined\"`\r\n  as a value. That is the other half of #4731: #4732 added the top-level guard\r\n  and left the array loop below it untouched. Happy to follow up with it\r\n  separately if you want it fixed the same way.\r\n\r\n4 tests added, 3 of which fail without the change. The fourth\r\n(`Should keep an empty string in an array`) passes on `main` already — it is a\r\nguard so that this never gets narrowed to a falsy check, which would start\r\ndropping empty values.\r\n\r\nFull suite passes locally. A couple of unrelated tests time out under full-suite\r\nload on my machine and pass in isolation - none of them import `src/client`.",
+      "leakage": {
+        "maxMatch": 69,
+        "flagged": true
+      }
+    },
+    {
+      "number": 5280,
+      "url": "https://github.com/honojs/hono/pull/5280",
+      "title": "fix(client): skip an undefined entry inside a form array",
+      "author": "yusukebe",
+      "createdAt": "2026-08-22T05:30:36Z",
+      "mergedAt": "2026-08-22T05:32:47Z",
+      "mergeSha": "c4a44071eee614c7317403f3534cd213d3f0e0b3",
+      "headSha": "8de5803c81055f87f7086d7e1ce82f423acc87aa",
+      "prBaseSha": "2059584f84187a688354956e0647269834ccf3a6",
+      "files": [
+        {
+          "path": "src/client/client.test.ts",
+          "status": "modified",
+          "additions": 32,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/client/client.ts",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 0,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/client/client.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/client/client.test.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix(client): skip an undefined entry inside a form array\n\n### The author should do the following, if applicable",
+      "leakage": {
+        "maxMatch": 0,
+        "flagged": false
+      }
+    },
+    {
+      "number": 5256,
+      "url": "https://github.com/honojs/hono/pull/5256",
+      "title": "fix(client): support custom buildSearchParams and filter undefined query in $ws()",
+      "author": "adityajha77",
+      "createdAt": "2026-08-17T17:31:32Z",
+      "mergedAt": "2026-08-22T05:39:03Z",
+      "mergeSha": "1096d66e03a3fd16a5cc5f912c2d5e8fd6d990b0",
+      "headSha": "0cd63f43581738f107e90c1bc71eab5beaaad483",
+      "prBaseSha": "eea9735fe308e6549509c312d80e13cd9e18898b",
+      "files": [
+        {
+          "path": "src/client/client.test.ts",
+          "status": "modified",
+          "additions": 30,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/client/client.ts",
+          "status": "modified",
+          "additions": 4,
+          "deletions": 7,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/client/client.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/client/client.test.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix(client): support custom buildSearchParams and filter undefined query in $ws()\n\n## Description\r\n\r\nFixes query parameter processing in `hc().$ws()` so that custom `buildSearchParams` functions are respected and `undefined` query parameter values are omitted.\r\n\r\n### Problem\r\nWhen calling `$ws()` on an `hc` client:\r\n1. Any custom `buildSearchParams` function passed in `options.buildSearchParams` was ignored because `$ws()` manually iterated over `opts.args[0].query` using standard `URLSearchParams.set/append`.\r\n2. `undefined` query parameter values were serialized as literal `\"undefined\"` strings (e.g., `?foo=undefined`), whereas `buildSearchParams` filters out `undefined` keys for HTTP endpoints.\r\n\r\n### Solution\r\n1. Updated `hc()`'s `proxyCallback` for `method === 'ws'` to route `opts.args[0].query` through `buildSearchParamsOption`.\r\n2. Appended search parameter entries generated by `buildSearchParamsOption` to the WebSocket target URL, preserving custom search parameter encoders and filtering out `undefined` keys.\r\n\r\n## Checklist",
+      "leakage": {
+        "maxMatch": 0,
+        "flagged": false
+      }
+    },
+    {
+      "number": 5255,
+      "url": "https://github.com/honojs/hono/pull/5255",
+      "title": "fix(accepts): support wildcard media types and specificity ordering in defaultMatch",
+      "author": "adityajha77",
+      "createdAt": "2026-08-17T17:29:45Z",
+      "mergedAt": "2026-08-22T05:55:00Z",
+      "mergeSha": "28a9c128912de19f3fb28b00ae289c9b93f6f392",
+      "headSha": "1d30eb13202090c20f09baee32d6a53cf15eda7a",
+      "prBaseSha": "eea9735fe308e6549509c312d80e13cd9e18898b",
+      "files": [
+        {
+          "path": "src/helper/accepts/accepts.test.ts",
+          "status": "modified",
+          "additions": 80,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/helper/accepts/accepts.ts",
+          "status": "modified",
+          "additions": 39,
+          "deletions": 2,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/helper/accepts/accepts.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/helper/accepts/accepts.test.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix(accepts): support wildcard media types and specificity ordering in defaultMatch\n\n## Description\r\n\r\nFixes an issue in the `accepts` helper where `defaultMatch` failed to match wildcard media types (`*/*` and `type/*`, e.g., `application/*`) sent by clients in `Accept` headers against server-supported MIME types.\r\n\r\n### Problem\r\n`defaultMatch` previously used a strict `supports.includes(accept.type)` check. When clients sent standard browser wildcard headers like `Accept: application/*` or `Accept: */*;q=0.8`, `defaultMatch` failed to match supported MIME types like `application/json`, inappropriately falling back to the `default` MIME type.\r\n\r\n### Solution\r\n1. Added `matchType` helper function to handle exact matches, subtype wildcards (`application/*`), and global wildcards (`*/*`).\r\n2. Added `getSpecificity` ordering so exact MIME matches take precedence over wildcard matches at the same quality factor (`q`) level per RFC 9110 HTTP Content Negotiation semantics.\r\n3. Updated `defaultMatch` to sort preferences by quality factor (`q`) and specificity before resolving against supported server media types.\r\n\r\n## Checklist",
+      "leakage": {
+        "maxMatch": 0,
+        "flagged": false
+      }
+    },
+    {
+      "number": 5283,
+      "url": "https://github.com/honojs/hono/pull/5283",
+      "title": "fix(client): omit empty query delimiter",
+      "author": "Ersaoktaviannn",
+      "createdAt": "2026-08-22T16:54:09Z",
+      "mergedAt": "2026-08-23T05:49:26Z",
+      "mergeSha": "73794bdabeadca93676cdbd54aa82d018feb69b8",
+      "headSha": "a963538f508822e5e040dc1e108b5ea7d1429de6",
+      "prBaseSha": "28a9c128912de19f3fb28b00ae289c9b93f6f392",
+      "files": [
+        {
+          "path": "src/client/client.test.ts",
+          "status": "modified",
+          "additions": 60,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/client/client.ts",
+          "status": "modified",
+          "additions": 7,
+          "deletions": 2,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/client/client.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/client/client.test.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix(client): omit empty query delimiter\n\n## Summary\n\n`hc` currently appends `?` whenever query input is present, even when the configured serializer emits no query pairs. This makes an omitted optional query structurally different from an absent query.\n\nThis change centralizes query attachment so the delimiter is added only when the serialized query string is non-empty. It applies to request methods, `$url()`, and `$path()`; non-empty queries (including `q=`) are preserved.\n\n## Before / after\n\nFor typed input `{ query: { q: undefined } }`:\n\n| API | Before | After |\n| --- | --- | --- |\n| `$get()` request | `http://localhost/search?` | `http://localhost/search` |\n| `$url().href` | `http://localhost/search?` | `http://localhost/search` |\n| `$path()` | `/search?` | `/search` |\n\nThe same result is verified when a custom `buildSearchParams` returns an empty `URLSearchParams`.\n\n## Impact\n\nThe URL Standard distinguishes an absent query from an empty query. Avoiding the dangling delimiter keeps generated client URLs canonical for exact comparisons, cache/signature keys, redirects, and logs, without changing queries that serialize at least one pair.\n\n`$ws()` is unchanged because it already omits the delimiter when no pairs are appended. No public API or type changes are included.\n\n## Verification\n\n- `npx vitest --run src/client/client.test.ts` — 118 passed\n- `npx tsc -p tsconfig.spec.json --pretty false`\n- `npx prettier --check src/client/client.ts src/client/client.test.ts`\n- `npx eslint src/client/client.ts src/client/client.test.ts` — no errors (one pre-existing warning elsewhere in the test file)\n- Full `npm test` was attempted; Vitest aborted before assertions completed because its coverage temp directory was removed during the run. CI remains the authoritative full-suite check.\n\n### The author should do the following, if applicable",
+      "leakage": {
+        "maxMatch": 0,
+        "flagged": false
+      }
+    },
+    {
+      "number": 5282,
+      "url": "https://github.com/honojs/hono/pull/5282",
+      "title": "fix(request): drop stale content length for cloned FormData",
+      "author": "Ersaoktaviannn",
+      "createdAt": "2026-08-22T16:30:49Z",
+      "mergedAt": "2026-08-23T06:57:47Z",
+      "mergeSha": "612b59c0227b421090d46721cd5a98243ad8c6ec",
+      "headSha": "7a8d6d7372a336af233e0ee0788d88e9df545603",
+      "prBaseSha": "28a9c128912de19f3fb28b00ae289c9b93f6f392",
+      "files": [
+        {
+          "path": "src/request.test.ts",
+          "status": "modified",
+          "additions": 28,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/request.ts",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 2,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/request.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/request.test.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix(request): drop stale content length for cloned FormData\n\n## Summary\n\n- remove the inherited `Content-Length` when `cloneRawRequest()` reserializes consumed `FormData`\n- let the runtime determine representation headers for the newly encoded multipart body\n- add a regression test using a valid multipart request with an explicit original length\n\n## Impact\n\n`cloneRawRequest()` supports forwarding requests after validation or body parsing. Multipart reserialization changes the boundary and can change the encoded size, so retaining the original `Content-Length` can leave downstream transports with invalid framing metadata.\n\n## Regression proof\n\nOn the Node 22 runtime used for the regression test, the valid multipart fixture is 77 bytes. Before this fix, reserialization produced a 125-byte body while the clone still declared `Content-Length: 77`.\n\nAfter this fix, the stale header is absent and the cloned form remains parseable, allowing the transport to determine the new length. This completes the representation-header handling introduced in #5133.\n\n## Testing\n\n- `vitest --run src/request.test.ts`: 43 passed\n- `tsc -p tsconfig.spec.json --pretty false`\n- `eslint src/request.ts src/request.test.ts`: 0 errors\n- `prettier --check src/request.ts src/request.test.ts`\n- Full `npm test`: 4,910 passed; local Windows `workerd` startup/WebSocket timed out. The `NO_COLOR`-dependent files passed 26/26 after unsetting the inherited variable.\n\n### The author should do the following, if applicable",
+      "leakage": {
+        "maxMatch": 0,
+        "flagged": false
+      }
+    },
+    {
+      "number": 5288,
+      "url": "https://github.com/honojs/hono/pull/5288",
+      "title": "fix(request): serialize cached JSON body in cloneRawRequest",
+      "author": "yusukebe",
+      "createdAt": "2026-08-23T07:14:07Z",
+      "mergedAt": "2026-08-23T07:16:58Z",
+      "mergeSha": "c409d855d91d1f0904d19439692216fcf789e6cb",
+      "headSha": "e5690dd579200a0e004afb040191ffa439589ebc",
+      "prBaseSha": "612b59c0227b421090d46721cd5a98243ad8c6ec",
+      "files": [
+        {
+          "path": "src/request.test.ts",
+          "status": "modified",
+          "additions": 18,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/request.ts",
+          "status": "modified",
+          "additions": 5,
+          "deletions": 4,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/request.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/request.test.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix(request): serialize cached JSON body in cloneRawRequest\n\n### The author should do the following, if applicable",
+      "leakage": {
+        "maxMatch": 0,
+        "flagged": false
+      }
+    },
+    {
+      "number": 5246,
+      "url": "https://github.com/honojs/hono/pull/5246",
+      "title": "fix(cookie): allow parsing signed cookies with empty string values",
+      "author": "spellsaif",
+      "createdAt": "2026-08-16T08:41:58Z",
+      "mergedAt": "2026-08-23T07:24:02Z",
+      "mergeSha": "241ae4c72b7ab732e425f40ea28cd3af2e78d8a2",
+      "headSha": "63d11538c9e07f3cfca727b8a54b2ad7071c8911",
+      "prBaseSha": "41bdc4288ed7023c24d35f32bd065bd963435e3e",
+      "files": [
+        {
+          "path": "src/helper/cookie/index.test.ts",
+          "status": "modified",
+          "additions": 12,
+          "deletions": 3,
+          "test": true
+        },
+        {
+          "path": "src/utils/cookie.test.ts",
+          "status": "modified",
+          "additions": 7,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/utils/cookie.ts",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/utils/cookie.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/helper/cookie/index.test.ts",
+          "src/utils/cookie.test.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix(cookie): allow parsing signed cookies with empty string values\n\nFixes an issue in `parseSigned` where valid signed cookies with empty string values (`\"\"`) were dropped during parsing.\r\n\r\n### Problem\r\n\r\nWhen serializing a signed cookie with an empty string value via `serializeSigned('key', '', secret)` (or `setSignedCookie(c, 'key', '', secret)`), the resulting cookie value is formatted as `.${signature}`.\r\n\r\nIn `src/utils/cookie.ts`:\r\n```ts\r\n    const signatureStartPos = value.lastIndexOf('.')\r\n    if (signatureStartPos < 1) {\r\n      continue\r\n    }\r\n```\r\n\r\nWhen value is .${signature}, value.lastIndexOf('.') is 0. Because signatureStartPos < 1 evaluates to true, parseSigned assumes the cookie is malformed and drops it, returning an empty object (and causing getSignedCookie to return undefined).\r\n\r\n### Solution\r\n\r\nChange the condition from signatureStartPos < 1 to signatureStartPos < 0 so that signed cookies with a signature starting at index 0 (empty signed value \"\") are properly verified and parsed.\r\n\r\n### The author should do the following, if applicable",
+      "leakage": {
+        "maxMatch": 0,
+        "flagged": false
+      }
+    },
+    {
+      "number": 5274,
+      "url": "https://github.com/honojs/hono/pull/5274",
+      "title": "fix(utils/stream): do not let abort listeners crash abort()",
+      "author": "tushardev-365",
+      "createdAt": "2026-08-21T11:28:20Z",
+      "mergedAt": "2026-08-23T07:34:05Z",
+      "mergeSha": "5e5b83d6ed963a2bc7d8384002e1c953648253b1",
+      "headSha": "05903550bb2feb8a226f0f8e07b306d11a747251",
+      "prBaseSha": "4b44abe1b5c7755aac8555d7943611555183450b",
+      "files": [
+        {
+          "path": "src/utils/stream.test.ts",
+          "status": "modified",
+          "additions": 53,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/utils/stream.ts",
+          "status": "modified",
+          "additions": 7,
+          "deletions": 1,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/utils/stream.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/utils/stream.test.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix(utils/stream): do not let abort listeners crash abort()\n\n`StreamingApi.abort()` invokes every abort subscriber bare:\n\n```ts\nthis.abortSubscribers.forEach((subscriber) => subscriber())\n```\n\n`onAbort` accepts `() => void | Promise<void>`, and the first built-in subscriber is async (`await reader.cancel()`), so two failure modes exist on the client-disconnect path that triggers `abort()`:\n\n- an async listener that rejects (cleanup RPC fails, resource already gone) becomes an unhandled promise rejection, which crashes the process under Node's default policy;\n- a listener that throws synchronously stops the `forEach`, so the remaining listeners never run, including the built-in reader cancel when user listeners were registered before it runs.\n\nThe fix contains errors per listener: sync throws are caught, and a returned promise gets a no-op catch. Silently containing them matches the policy `write()` in the same class already applies (\"Do nothing. If you want to handle errors, create a stream by yourself.\").\n\nTwo tests added next to the existing `abort()` specs:\n\n- a throwing listener must not prevent later listeners from running;\n- a rejecting async listener must not produce an unhandled rejection (asserted via a `process.on('unhandledRejection')` capture).\n\nVerification with the repo's vitest setup: with the fix, 13 passed (13); with current main's `stream.ts` and only the tests added, 2 failed | 11 passed, the two failures being exactly the new cases.\n\nThe author should do the following, if applicable",
+      "leakage": {
+        "maxMatch": 47,
+        "flagged": true
+      }
+    },
+    {
+      "number": 5297,
+      "url": "https://github.com/honojs/hono/pull/5297",
+      "title": "fix(client): keep a param value of \"index\" in $url() and $path()",
+      "author": "MahathirMohammadShuvo",
+      "createdAt": "2026-08-25T11:24:20Z",
+      "mergedAt": "2026-08-27T00:17:53Z",
+      "mergeSha": "50b8788cf54cb60112b7cd93642bc5094901475c",
+      "headSha": "1680bdbb422609427073c54659144780b3f551ce",
+      "prBaseSha": "017000d6ad5bc6a65dd0f9215a4fdfea6ea80aea",
+      "files": [
+        {
+          "path": "src/client/client.test.ts",
+          "status": "modified",
+          "additions": 71,
+          "deletions": 7,
+          "test": true
+        },
+        {
+          "path": "src/client/client.ts",
+          "status": "modified",
+          "additions": 4,
+          "deletions": 3,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/client/client.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/client/client.test.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix(client): keep a param value of \"index\" in $url() and $path()\n\n## Summary\n\n`removeIndexString()` strips a trailing `/index` so the synthetic `.index`\naccessor resolves to the route it aliases. In the `$url()` / `$path()` branch it\nruns *after* the path params have been substituted, so anything that merely\nlooks like the alias once substitution is done gets stripped as well.\n\nMoving the call ahead of substitution fixes it: the alias is part of the route\ntemplate, and a param value is not.\n\n## Before / after\n\n| Typed route | Call | Before | After |\n| --- | --- | --- | --- |\n| `/docs/:page` | `param: { page: 'index' }` | `/docs` | `/docs/index` |\n| `/:page` | `param: { page: 'index' }` | `/` | `/index` |\n| `/index/:v?` | `param: { v: undefined }` | `/` | `/index` |\n\nThe third row is a route with a **literal** `/index` segment rather than a param\nvalue. Dispatching against that route alone, `/` returns 404 and `/index`\nreturns 200, so the generated URL did not point at the route it came from.\n\n## Why this ordering\n\n`ClientRequestImpl.fetch` has done `removeIndexString` → `replaceUrlParam` since\n`hc` was introduced in #862, which is why `$get()` already returns the right path\nfor all three rows above and only `$url()` / `$path()` disagreed.\n\nThis is a follow-up to #4267, which added the `removeIndexString` call to this\nbranch (fixing #4265) and placed it at the end of the sequence, immediately\nbefore `return new URL(result)`. Moving it to the front brings the branch in line\nwith `fetch`.\n\n`removeIndexString`'s `(?=\\?|$)` lookahead, added in #4352, is left as-is: it is\nstill exercised directly by `src/client/utils.test.ts`, even though no `hc` call\nsite now passes it a query string.\n\n## Relationship to #5291\n\n#5291 adds the same normalization to the `$ws()` branch. The two are independent\nhunks in the same function and complementary. I merged them locally in a scratch\nbranch to check: no conflict, and `src/client/client.test.ts` passes 128 with\nboth applied. With both in, all four accessors (`$get()`, `$url()`, `$path()`,\n`$ws()`) strip the alias from the route template before substituting params.\nHappy to rebase on top of #5291 if it lands first.\n\n## Tests\n\n5 tests added, 9 executions — four of them sit in the `$path` / `$url`\n`describe.each`, and one in the query-option block. 7 fail on `main`. The one\nthat passes either way — `Should still drop the index alias of a route with a\nparam` — is a regression guard that the genuine alias is still removed.\n\n## Verification\n\n- `npx vitest --run src/client/client.test.ts` — 127 passed (120 with `client.ts`\n  reverted to `main`, 7 failed)\n- `npx tsc -p tsconfig.spec.json` — exit 0\n- `npx eslint src` — exit 0\n- Prettier clean on the committed blobs\n- Full `npx vitest --run`: green with `--coverage.enabled=false`. With coverage\n  on I see at least one pre-existing 5 s timeout,\n  `src/middleware/compress/index.test.ts` \"should compress streaming responses\n  written in multiple chunks\", which reproduces identically on a clean `main`\n  checkout and passes 45/45 in isolation.\n\n### The author should do the following, if applicable",
+      "leakage": {
+        "maxMatch": 57,
+        "flagged": true
+      }
+    },
+    {
+      "number": 5291,
+      "url": "https://github.com/honojs/hono/pull/5291",
+      "title": "fix(client): normalize root WebSocket URLs",
+      "author": "Ersaoktaviannn",
+      "createdAt": "2026-08-24T04:22:33Z",
+      "mergedAt": "2026-08-27T00:20:10Z",
+      "mergeSha": "499c35ebda35777fd35a7dd1906dd4f2687da61e",
+      "headSha": "564adb92df4c6ad2f539b58cfcdbcc427a180193",
+      "prBaseSha": "5e5b83d6ed963a2bc7d8384002e1c953648253b1",
+      "files": [
+        {
+          "path": "src/client/client.test.ts",
+          "status": "modified",
+          "additions": 22,
+          "deletions": 10,
+          "test": true
+        },
+        {
+          "path": "src/client/client.ts",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 1,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/client/client.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/client/client.test.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix(client): normalize root WebSocket URLs\n\n## Summary\n\n- normalize the Hono Client `index` alias before constructing WebSocket URLs\n- keep protocol translation, query serialization, and custom WebSocket providers unchanged\n- preserve real path parameter values equal to `index`\n\n## Before / after\n\n| Typed route | Before | After |\n| --- | --- | --- |\n| `client.index.$ws()` for `/` | `ws://host/index` | `ws://host/` |\n| nested root route | `ws://host/api/index` | `ws://host/api` |\n| `/:id` with `id: \"index\"` | `ws://host/index` | unchanged |\n\n## Impact\n\n`index` is the client-side alias for a root route. `$get()`, `$url()`, and `$path()` already remove that synthetic segment, but `$ws()` did not. As a result, a typed WebSocket client for `/` attempted its handshake against `/index` (and a nested root against `/api/index`), which targets a different route and commonly returns `404`.\n\nNormalization runs before path parameter substitution, so a genuine dynamic value named `index` is not removed.\n\n## Verification\n\n- `npx vitest --run src/client/client.test.ts` — 119 passed\n- `npx vitest --run src/client/types.test.ts --coverage.enabled=false` — 13 passed\n- `npx tsc -p tsconfig.spec.json --pretty false`\n- Prettier, ESLint, and `git diff --check` on the changed files\n\n### The author should do the following, if applicable",
+      "leakage": {
+        "maxMatch": 0,
+        "flagged": false
+      }
+    }
+  ],
+  "excluded": [],
+  "overlaps": [
+    {
+      "file": "src/client/client.ts",
+      "prs": [
+        5244,
+        5280,
+        5256,
+        5283,
+        5297,
+        5291
+      ]
+    },
+    {
+      "file": "src/request.ts",
+      "prs": [
+        5282,
+        5288
+      ]
+    }
+  ],
+  "githubRequests": 29,
+  "hash": "8a7187dde7c7deed26f3c5363663eaea3ebbf9765817a1774a350ee26abc89cc"
+}

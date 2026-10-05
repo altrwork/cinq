@@ -1,0 +1,63 @@
+{
+  "run": "slotly-r5",
+  "landed": 5,
+  "parked": 1,
+  "rebuilt": 2,
+  "tokens": 4838169,
+  "minutes": 7.7,
+  "eventSpanMinutes": 7.5,
+  "events": 118,
+  "jobs": 6,
+  "jobsLanded": 5,
+  "jobsParked": 1,
+  "run_summary": {
+    "repo": "slotly-r5",
+    "minutes": 7.7,
+    "jobs": 6,
+    "landed": 5,
+    "parked": [
+      "users-can-pay-for-pro-through-stripe-che"
+    ],
+    "usage": {
+      "ok": true,
+      "total": {
+        "input": 364,
+        "cached": 4738830,
+        "output": 98975,
+        "sessions": 19,
+        "costUsd": 5.609192,
+        "tokens": 4838169
+      },
+      "byRole": {
+        "examiner": {
+          "tokens": 584277,
+          "jobs": 6
+        },
+        "builder": {
+          "tokens": 1195437,
+          "jobs": 4
+        },
+        "author": {
+          "tokens": 2251453,
+          "jobs": 2
+        },
+        "reviewer": {
+          "tokens": 140050,
+          "jobs": 5
+        },
+        "rebuilder": {
+          "tokens": 666952,
+          "jobs": 2
+        }
+      },
+      "landed": 5,
+      "tokensPerLanded": 967634
+    }
+  },
+  "raw": [
+    "asks.json.gz",
+    "events.json.gz",
+    "jobs.json.gz",
+    "rules.json.gz"
+  ]
+}

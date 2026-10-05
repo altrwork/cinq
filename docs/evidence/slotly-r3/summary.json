@@ -1,0 +1,63 @@
+{
+  "run": "slotly-r3",
+  "landed": 5,
+  "parked": 1,
+  "rebuilt": 1,
+  "tokens": 3752170,
+  "minutes": 6.7,
+  "eventSpanMinutes": 6.5,
+  "events": 111,
+  "jobs": 6,
+  "jobsLanded": 5,
+  "jobsParked": 1,
+  "run_summary": {
+    "repo": "slotly-r3",
+    "minutes": 6.7,
+    "jobs": 6,
+    "landed": 5,
+    "parked": [
+      "free-users-can-pay-for-pro-through-strip"
+    ],
+    "usage": {
+      "ok": true,
+      "total": {
+        "input": 310,
+        "cached": 3670296,
+        "output": 81564,
+        "sessions": 18,
+        "costUsd": 4.7893138,
+        "tokens": 3752170
+      },
+      "byRole": {
+        "author": {
+          "tokens": 1687703,
+          "jobs": 2
+        },
+        "builder": {
+          "tokens": 1070907,
+          "jobs": 4
+        },
+        "examiner": {
+          "tokens": 686818,
+          "jobs": 6
+        },
+        "reviewer": {
+          "tokens": 131085,
+          "jobs": 5
+        },
+        "rebuilder": {
+          "tokens": 175657,
+          "jobs": 1
+        }
+      },
+      "landed": 5,
+      "tokensPerLanded": 750434
+    }
+  },
+  "raw": [
+    "asks.json.gz",
+    "events.json.gz",
+    "jobs.json.gz",
+    "rules.json.gz"
+  ]
+}

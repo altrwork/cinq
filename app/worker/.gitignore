@@ -1,0 +1,6 @@
+node_modules/
+secrets.json
+.dev.vars
+.wrangler/
+secrets-demo.json
+.cinq-deploy-*.json

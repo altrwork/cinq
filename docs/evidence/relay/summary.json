@@ -1,0 +1,99 @@
+{
+  "run": "relay",
+  "landed": 56,
+  "parked": 0,
+  "rebuilt": 16,
+  "tokens": null,
+  "minutes": null,
+  "runs": 5,
+  "intents": 56,
+  "rebuiltGreen": 16,
+  "perRun": [
+    {
+      "run": "day1-c10",
+      "intents": 10,
+      "landed": 10,
+      "plainGit": {
+        "cleanAndGreen": 5,
+        "textualConflicts": 3,
+        "cleanMergeButRed": 2,
+        "agentSubmittedNothing": 0
+      },
+      "rebuilt": {
+        "attempts": 5,
+        "green": 5
+      }
+    },
+    {
+      "run": "day1-c6",
+      "intents": 10,
+      "landed": 10,
+      "plainGit": {
+        "cleanAndGreen": 6,
+        "textualConflicts": 3,
+        "cleanMergeButRed": 1,
+        "agentSubmittedNothing": 0
+      },
+      "rebuilt": {
+        "attempts": 4,
+        "green": 4
+      }
+    },
+    {
+      "run": "day2-c10",
+      "intents": 12,
+      "landed": 12,
+      "plainGit": {
+        "cleanAndGreen": 9,
+        "textualConflicts": 2,
+        "cleanMergeButRed": 1,
+        "agentSubmittedNothing": 0
+      },
+      "rebuilt": {
+        "attempts": 2,
+        "green": 2
+      }
+    },
+    {
+      "run": "day2-c4",
+      "intents": 12,
+      "landed": 12,
+      "plainGit": {
+        "cleanAndGreen": 9,
+        "textualConflicts": 1,
+        "cleanMergeButRed": 2
+      },
+      "rebuilt": {
+        "attempts": 2,
+        "green": 2
+      }
+    },
+    {
+      "run": "day2-c6",
+      "intents": 12,
+      "landed": 12,
+      "plainGit": {
+        "cleanAndGreen": 8,
+        "textualConflicts": 1,
+        "cleanMergeButRed": 3,
+        "agentSubmittedNothing": 0
+      },
+      "rebuilt": {
+        "attempts": 3,
+        "green": 3
+      }
+    }
+  ],
+  "raw": [
+    "day1-c10.log.gz",
+    "day1-c10.receipts.json.gz",
+    "day1-c6.log.gz",
+    "day1-c6.receipts.json.gz",
+    "day2-c10.log.gz",
+    "day2-c10.receipts.json.gz",
+    "day2-c4.log.gz",
+    "day2-c4.receipts.json.gz",
+    "day2-c6.log.gz",
+    "day2-c6.receipts.json.gz"
+  ]
+}

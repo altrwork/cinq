@@ -1,0 +1,17 @@
+{
+  "run": "splitbill-2",
+  "landed": 5,
+  "parked": 1,
+  "rebuilt": 6,
+  "tokens": null,
+  "minutes": null,
+  "eventSpanMinutes": 409.8,
+  "events": 137,
+  "jobs": 6,
+  "jobsLanded": 5,
+  "jobsParked": 1,
+  "raw": [
+    "events.json.gz",
+    "jobs.json.gz"
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "_doc": "Backtest windows (briefs/ready-skeptic.md §3). 'lander' is written as .cinq/config.json in the prep commit, the lander's own override hook (app/worker/src/lander/server.cjs repoConfig). 'local' is how oracle.mjs runs the same suite on this machine. Window dates are UTC, inclusive.",
+  "hono": {
+    "repo": "honojs/hono",
+    "from": "2026-08-22T00:00:00Z",
+    "to": "2026-08-27T23:59:59Z",
+    "why": "6 PRs on src/client/client.ts by 4 authors in 5 days; 4 merged within 26 minutes on Aug 22",
+    "lander": { "test": { "runner": "vitest", "args": ["--project", "main"] }, "install": "npm install --no-audit --no-fund --legacy-peer-deps" },
+    "local": { "install": { "cmd": "npm", "args": ["install", "--no-audit", "--no-fund", "--legacy-peer-deps"] }, "test": { "runner": "vitest", "args": ["--project", "main"] } },
+    "notes": [
+      "Upstream ships bun.lock, which the lander does not read, so it falls back to npm install without a lockfile. Dependency versions can drift from upstream's (UNVERIFIED effect).",
+      "Measured on Windows/Node 22.23.3: --project main, 3,956 tests, 66 s; 1 compress streaming test timed out under load (the lander's one-re-run flake rule covers it)."
+    ]
+  },
+  "es-toolkit": {
+    "repo": "toss/es-toolkit",
+    "from": "2026-09-10T00:00:00Z",
+    "to": "2026-09-19T23:59:59Z",
+    "why": "words.ts touched by 3 PRs (2 authors) and dedent.ts by 2 PRs within days",
+    "lander": { "test": { "runner": "vitest", "args": ["--exclude", "tests/check-dist.spec.ts", "--exclude", "benchmarks/**", "--exclude", "tests/types/**", "--exclude", ".yarn/**"] },
+      "install": "YARN_NODE_LINKER=node-modules node .yarn/releases/yarn-4.12.0.cjs install" },
+    "local": { "install": { "cmd": "node", "args": [".yarn/releases/yarn-4.12.0.cjs", "install"], "env": { "YARN_NODE_LINKER": "node-modules" } },
+      "test": { "runner": "vitest", "args": ["--exclude", "tests/check-dist.spec.ts", "--exclude", "benchmarks/**", "--exclude", "tests/types/**", "--exclude", ".yarn/**"] } },
+    "notes": [
+      "tests/check-dist.spec.ts builds and packs the tarball (197 s, failed on Windows paths), so it is excluded from gating and from O3, and listed as excluded in the report.",
+      "Yarn 4 defaults to PnP, and the lander calls `npx --no-install vitest`, which needs node_modules. Hence YARN_NODE_LINKER=node-modules (UNVERIFIED: --immutable is not used in case the linker switch touches the install state).",
+      "The yarn release path is pinned to the version at the window base (yarn-4.12.0.cjs); select.mjs records it."
+    ]
+  },
+  "fastify": {
+    "repo": "fastify/fastify",
+    "from": "2026-08-03T00:00:00Z",
+    "to": "2026-08-09T23:59:59Z",
+    "why": "a chain of breaking deprecation removals touching fastify.js, lib/warnings.js and the generated lib/config-validator.js; terse PR descriptions",
+    "lander": { "install": "npm install --no-audit --no-fund" },
+    "local": { "install": { "cmd": "npm", "args": ["install", "--no-audit", "--no-fund"] }, "test": { "runner": "node", "args": [] } },
+    "notes": [
+      "BLOCKED for the product run: the lander's node --test path cannot exclude test/build/** (a build test that hit its 30 s timeout under load), and fastify's suite runs through borp, not plain node --test discovery. Run hono and es-toolkit first."
+    ]
+  }
+}

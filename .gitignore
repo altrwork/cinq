@@ -1,0 +1,8 @@
+node_modules/
+backtest/cache/
+backtest/work/
+app/worker/.cinq-deploy-*.json
+
+# never commit secrets, anywhere in the repo
+secrets*.json
+.dev.vars

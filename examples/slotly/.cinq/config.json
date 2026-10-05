@@ -1,0 +1,4 @@
+{
+  "protectedPaths": [".github/**", "**/auth/**", "**/payments/**", "**/wrangler.*", "**/.env", "**/.env.*", ".npmrc", "Dockerfile"],
+  "review": "block"
+}

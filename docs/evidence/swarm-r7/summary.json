@@ -1,0 +1,39 @@
+{
+  "run": "swarm-r7",
+  "landed": 113,
+  "parked": 6,
+  "rebuilt": 98,
+  "tokens": null,
+  "minutes": 47.5,
+  "eventSpanMinutes": 47.3,
+  "events": 2131,
+  "jobs": 119,
+  "jobsLanded": 113,
+  "jobsParked": 6,
+  "run_summary": {
+    "minutes": 47.5,
+    "board": {
+      "landed": 113,
+      "parked": 6
+    },
+    "landed": 113,
+    "conflicts": 103,
+    "rederivesQueued": 98,
+    "examinations": 119,
+    "trunkHeads": 113,
+    "medianMinToLand": 18.7,
+    "tally": {
+      "proposed": 119,
+      "handedIn": 118,
+      "examined": 119,
+      "rebuilt": 98,
+      "reviewed": 113,
+      "errors": 8
+    }
+  },
+  "raw": [
+    "console.log.gz",
+    "events.json.gz",
+    "jobs.json.gz"
+  ]
+}

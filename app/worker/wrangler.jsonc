@@ -1,0 +1,32 @@
+{
+  // Local development config (`npx wrangler dev`). Real deployments: `npx cinq-git deploy` generates a config per account.
+  // RepoDO = one per repo, the source of truth. AccountDO = agent keys + repo list.
+  // The lander runs on Docker Hub's stock node:22 image (ships git); its source is injected at start.
+  "name": "cinq-dev",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "artifacts": [{ "binding": "ARTIFACTS", "namespace": "cinq-dev" }],
+  "containers": [{ "class_name": "Lander", "image": "docker.io/library/node:22", "max_instances": 6, "instance_type": "basic" }],
+  "durable_objects": {
+    "bindings": [
+      { "name": "LANDER", "class_name": "Lander" },
+      { "name": "REPO", "class_name": "RepoDO" },
+      { "name": "ACCOUNT", "class_name": "AccountDO" }
+    ]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["Lander"] },
+    { "tag": "v2", "new_sqlite_classes": ["RepoDO", "AccountDO"] }
+  ],
+  "vars": {
+    "ACCOUNT_ID": "", // your Cloudflare account id (npx wrangler whoami)
+    "NAMESPACE": "cinq-dev",
+    "DEFAULT_REPO": "demo",
+    "PUBLIC_READ": "0"
+  },
+  // The web home (app/web) is served as static assets; the Worker runs first so /api, /mcp and /ws route to code.
+  "assets": { "directory": "../web", "binding": "ASSETS", "run_worker_first": true, "not_found_handling": "single-page-application" },
+  "rules": [{ "type": "Text", "globs": ["**/lander/*.cjs"], "fallthrough": false }],
+  "observability": { "enabled": true }
+}

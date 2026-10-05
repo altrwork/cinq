@@ -1,0 +1,53 @@
+{
+  "name": "cinq-git",
+  "version": "0.1.1",
+  "description": "A Git platform where AI coding agents check each other's work, built on Cloudflare (Artifacts, Durable Objects, Containers, Workers).",
+  "license": "MIT",
+  "author": "altr <alex@altrwork.com>",
+  "homepage": "https://github.com/altrwork/cinq#readme",
+  "bugs": "https://github.com/altrwork/cinq/issues",
+  "keywords": [
+    "git",
+    "ai-agents",
+    "code-review",
+    "merge-queue",
+    "cloudflare",
+    "workers",
+    "durable-objects",
+    "claude-code",
+    "mcp"
+  ],
+  "type": "module",
+  "bin": {
+    "cinq": "app/cli/cinq.mjs"
+  },
+  "files": [
+    "app/cli/",
+    "app/worker/src/",
+    "app/worker/package.json",
+    "app/web/",
+    "README.md",
+    "LICENSE",
+    "!app/web/dev-server.mjs"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/altrwork/cinq.git"
+  },
+  "dependencies": {
+    "@cloudflare/containers": "0.3.7",
+    "@modelcontextprotocol/server": "^2.0.0",
+    "agents": "^0.24.0",
+    "zod": "^4.6.5",
+    "wrangler": "4.146.0"
+  },
+  "scripts": {
+    "test": "node --test app/worker/test/engine.test.mjs app/worker/test/lander.test.mjs app/worker/test/security.test.mjs",
+    "test:cloud": "node app/worker/test/cloud-scenarios.mjs",
+    "test:e2e": "node app/worker/test/e2e-api.mjs",
+    "test:e2e-plan": "node app/worker/test/e2e-plan.mjs"
+  }
+}

@@ -1,0 +1,981 @@
+{
+  "schema": 1,
+  "window": "es-toolkit",
+  "repo": "toss/es-toolkit",
+  "from": "2026-09-10T00:00:00Z",
+  "to": "2026-09-19T23:59:59Z",
+  "why": "words.ts touched by 3 PRs (2 authors) and dedent.ts by 2 PRs within days",
+  "frozenAt": "2026-10-01T23:02:19.912Z",
+  "base": {
+    "sha": "3d858779beebfbcb6a01c342b929c0f5c4bd7c06",
+    "note": "parent of #2091's merge commit",
+    "date": "2026-09-07T06:15:19Z"
+  },
+  "end": {
+    "sha": "ee72fc74b763d8cb48095e1981a5bcef19ba5cee",
+    "note": "merge commit of #2110"
+  },
+  "lander": {
+    "test": {
+      "runner": "vitest",
+      "args": [
+        "--exclude",
+        "tests/check-dist.spec.ts",
+        "--exclude",
+        "benchmarks/**",
+        "--exclude",
+        "tests/types/**",
+        "--exclude",
+        ".yarn/**"
+      ]
+    },
+    "install": "YARN_NODE_LINKER=node-modules node .yarn/releases/yarn-4.12.0.cjs install"
+  },
+  "local": {
+    "install": {
+      "cmd": "node",
+      "args": [
+        ".yarn/releases/yarn-4.12.0.cjs",
+        "install"
+      ],
+      "env": {
+        "YARN_NODE_LINKER": "node-modules"
+      }
+    },
+    "test": {
+      "runner": "vitest",
+      "args": [
+        "--exclude",
+        "tests/check-dist.spec.ts",
+        "--exclude",
+        "benchmarks/**",
+        "--exclude",
+        "tests/types/**",
+        "--exclude",
+        ".yarn/**"
+      ]
+    }
+  },
+  "notes": [
+    "tests/check-dist.spec.ts builds and packs the tarball (197 s, failed on Windows paths), so it is excluded from gating and from O3, and listed as excluded in the report.",
+    "Yarn 4 defaults to PnP, and the lander calls `npx --no-install vitest`, which needs node_modules. Hence YARN_NODE_LINKER=node-modules (UNVERIFIED: --immutable is not used in case the linker switch touches the install state).",
+    "The yarn release path is pinned to the version at the window base (yarn-4.12.0.cjs); select.mjs records it."
+  ],
+  "selectionRule": "merged in window; not bot; >=1 non-test source file; >=1 added/changed test file; no deps changes",
+  "prs": [
+    {
+      "number": 2091,
+      "url": "https://github.com/toss/es-toolkit/pull/2091",
+      "title": "fix(compat): read sparse array holes as undefined in toString",
+      "author": "mariazuheros",
+      "createdAt": "2026-09-08T11:22:14Z",
+      "mergedAt": "2026-09-10T01:17:01Z",
+      "mergeSha": "9807495a9eed582e2682732144a5ebc2f488fa87",
+      "headSha": "98f4681862f1abfbb6e5783bc53068f9770906e8",
+      "prBaseSha": "3d858779beebfbcb6a01c342b929c0f5c4bd7c06",
+      "files": [
+        {
+          "path": "src/compat/util/toString.spec.ts",
+          "status": "modified",
+          "additions": 7,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/util/toString.ts",
+          "status": "modified",
+          "additions": 13,
+          "deletions": 1,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/compat/util/toString.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/compat/util/toString.spec.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix(compat): read sparse array holes as undefined in toString\n\n## Summary\n\n`compat/toString` renders an array by mapping its elements with `Array.prototype.map`, which skips holes in a sparse array. lodash reads every index, so a hole is converted as `undefined` rather than dropped:\n\n[diff-like code block removed]\n\n## Changes\n\nIterate the array by index instead of using `.map`, so each hole is read as `undefined` and converted through the same path as any other element. Dense arrays are unaffected, and the `-0`, symbol, and nested-array handling stay the same.\n\nAdded tests for sparse inputs.\n\n## Verified\n\nRan the compat implementation against `lodash` at runtime across sparse, dense, nested, nullish, `-0`, and symbol arrays. All outputs match.",
+      "leakage": {
+        "maxMatch": 0,
+        "flagged": false
+      }
+    },
+    {
+      "number": 2072,
+      "url": "https://github.com/toss/es-toolkit/pull/2072",
+      "title": "fix[dropWhile, dropRightWhile, some]: normalize the predicate like lodash",
+      "author": "Archibald1948",
+      "createdAt": "2026-08-30T13:25:19Z",
+      "mergedAt": "2026-09-10T06:17:38Z",
+      "mergeSha": "17719a5f95d11a650f43991d0fd3038aaf5b43c9",
+      "headSha": "a87c99a809f0e38302881928e58106a6ff824b61",
+      "prBaseSha": "a5ca64d20eaeadc8164b8380ecbb2964932064fa",
+      "files": [
+        {
+          "path": "src/compat/array/dropRightWhile.spec.ts",
+          "status": "modified",
+          "additions": 19,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/array/dropRightWhile.ts",
+          "status": "modified",
+          "additions": 4,
+          "deletions": 6,
+          "test": false
+        },
+        {
+          "path": "src/compat/array/dropWhile.spec.ts",
+          "status": "modified",
+          "additions": 19,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/array/dropWhile.ts",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 5,
+          "test": false
+        },
+        {
+          "path": "src/compat/array/some.spec.ts",
+          "status": "modified",
+          "additions": 7,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/array/some.ts",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 3,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/compat/array/dropRightWhile.ts",
+        "src/compat/array/dropWhile.ts",
+        "src/compat/array/some.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/compat/array/dropRightWhile.spec.ts",
+          "src/compat/array/dropWhile.spec.ts",
+          "src/compat/array/some.spec.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix[dropWhile, dropRightWhile, some]: normalize the predicate like lodash\n\n## The difference (as code)\n\n`es-toolkit/compat`'s `dropWhile`, `dropRightWhile` and `some` return `undefined` for a boolean predicate, and `dropWhile` / `dropRightWhile` treat a `null` predicate as \"match everything\" instead of `identity`:\n\n```js\ndropWhile([1, 2, 3], true);                   // lodash: [1, 2, 3]      es-toolkit: undefined\ndropWhile([{ true: 1 }, { true: 0 }], true);  // lodash: [{ true: 0 }]  es-toolkit: undefined\ndropRightWhile([1, 2, 3], true);              // lodash: [1, 2, 3]      es-toolkit: undefined\ndropRightWhile([{ false: 1 }], false);        // lodash: []             es-toolkit: undefined\nsome([1, 2, 3], true);                        // lodash: false          es-toolkit: undefined\nsome([{ false: 1 }], false);                  // lodash: true           es-toolkit: undefined\n\ndropWhile([0, 1, 2], null);                   // lodash: [0, 1, 2]      es-toolkit: []\ndropRightWhile([1, 2, 0], null);              // lodash: [1, 2, 0]      es-toolkit: []\n```\n\n`some` is declared to return `boolean`, so this also breaks its own signature.\n\n## Cause\n\nLodash normalizes every shorthand through `baseIteratee`, which has a nullish check and a catch-all:\n\n```js\nfunction baseIteratee(value) {\n  if (typeof value == 'function') return value;\n  if (value == null) return identity;          // <- nullish\n  if (typeof value == 'object') {\n    return isArray(value) ? baseMatchesProperty(value[0], value[1]) : baseMatches(value);\n  }\n  return property(value);                      // <- catch-all\n}\n```\n\n`es-toolkit/compat` already mirrors both in `iteratee()`, and most compat collection functions route their predicate through it. `dropWhile`, `dropRightWhile` and `some` instead hand-roll the same switch, and the hand-rolled copy is missing both pieces.\n\n**1. The switch is not total.** It enumerates the primitive cases rather than using `default:`:\n\n```js\ncase 'number':\ncase 'symbol':\ncase 'string': {\n  return dropWhileToolkit(arr, property(predicate));\n}\n```\n\nA `boolean` predicate matches no case, so control falls out of the bottom of the switch and the function implicitly returns `undefined`. (`dropRightWhile` additionally omits `'symbol'`.)\n\n**2. A default parameter does not cover `null`.** `dropWhile` and `dropRightWhile` declare `predicate: ListIteratee<T> = identity`, but a default parameter only applies to `undefined`. A `null` predicate reaches the switch, hits `typeof null === 'object'`, and becomes `matches(null)` — which matches every element, so every element is dropped.\n\n## Changes\n\n1. Replace the enumerated primitive cases with `default:` so each switch is total and lands on the same catch-all `iteratee()` already uses:\n\n[diff-like code block removed]\n\n2. Normalize a nullish predicate with `predicate ?? identity`, the way the neighbouring `takeWhile` already does:\n\n```js\n- export function dropWhile<T>(array: ArrayLike<T> | null | undefined, predicate: ListIteratee<T> = identity): T[] {\n+ export function dropWhile<T>(array: ArrayLike<T> | null | undefined, predicate?: ListIteratee<T>): T[] {\n    if (!isArrayLike(array)) {\n      return [];\n    }\n\n-   return dropWhileImpl(toArray(array), predicate);\n+   return dropWhileImpl(toArray(array), predicate ?? identity);\n  }\n```\n\nThe parameter stays optional, so the public type is unchanged. No other branch is touched.\n\n## Verification\n\nDifferential run against `lodash@4.18.1` over 8 functions x 9 collections x 9 predicate values (648 combinations):\n\n| | mismatches |\n| --- | --- |\n| before | 158 / 648 |\n| after | 67 / 648 |\n\nFixed: 40 in `dropWhile`, 40 in `dropRightWhile`, 36 in `some`. The five untouched sibling functions (`every`, `filter`, `find`, `takeWhile`, `takeRightWhile`) produce a byte-identical mismatch list before and after.\n\nAll 67 remaining mismatches are the single predicate `0n`, where **lodash itself throws** `TypeError: Cannot mix BigInt and other types` (its `toKey` evaluates `1 / value` on a BigInt). After this change the three functions return a value there — exactly like `filter` (8), `find` (8), `every` (9), `takeWhile` (8) and `takeRightWhile` (8) already do — so that behaviour is pre-existing across compat and is neither introduced nor changed here.\n\nRegression tests were added to all three spec files. On `main` they fail with:\n\n```\nAssertionError: expected undefined to deeply equal [ 1, 2, 3 ]\nAssertionError: expected undefined to be false // Object.is equality\nAssertionError: expected [] to deeply equal [ 1, 2, +0 ]\n```\n\nFull suite: 699 files, 4889 passed / 2 skipped. `tsc --noEmit` clean, `yarn lint` 0 errors.\n\n## Benchmarks\n\nInterleaved A/B (`fix`, then `main`, five times alternating, so machine drift affects both sides equally), median of the five paired per-round deltas:\n\n| benchmark | delta |\n| --- | --- |\n| `es-toolkit/compat/dropWhile` | +6.7% |\n| `es-toolkit/compat/dropWhile` — largeArray | -4.1% |\n| `es-toolkit (compat)/dropRightWhile` | +7.9% |\n| `es-toolkit (compat)/dropRightWhile` — largeArray | +0.8% |\n| `es-toolkit/some` (this bench imports from `es-toolkit/compat`) | +8.4% |\n| `es-toolkit/some` — largeArray | +1.0% |\n| *control* `lodash/dropWhile` (untouched) | +0.1% |\n| *control* `lodash/dropRightWhile` (untouched) | +1.0% |\n| *control* `lodash/some` (untouched) | +0.4% |\n| *control* `es-toolkit/dropWhile` (untouched, non-compat) | +4.6% |\n| *control* `es-toolkit/dropRightWhile` (untouched, non-compat) | -1.7% |\n\nNo regression. The untouched controls in the same runs move by -1.7% to +4.6% and individual rounds vary by more than +/-10%, so I am not claiming a real speedup — the honest reading is that these are within this machine's noise. The one pattern that is at least consistent with the change is that the per-call benchmarks trend slightly positive while the `largeArray` ones do not, which is what you would expect from replacing three sequential `case` string comparisons with a single `default`.",
+      "leakage": {
+        "maxMatch": 106,
+        "flagged": true
+      }
+    },
+    {
+      "number": 2090,
+      "url": "https://github.com/toss/es-toolkit/pull/2090",
+      "title": "fix(countBy): return a plain object from compat countBy",
+      "author": "MFA-G",
+      "createdAt": "2026-09-07T13:28:27Z",
+      "mergedAt": "2026-09-10T08:12:35Z",
+      "mergeSha": "3aee05dcbac60af8442f61fc1b7c70f7c0a616f7",
+      "headSha": "83f9f45fe9893aaadf7844fd0a5592860c012e19",
+      "prBaseSha": "3d858779beebfbcb6a01c342b929c0f5c4bd7c06",
+      "files": [
+        {
+          "path": "src/compat/array/countBy.spec.ts",
+          "status": "modified",
+          "additions": 20,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/array/countBy.ts",
+          "status": "modified",
+          "additions": 4,
+          "deletions": 1,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/compat/array/countBy.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/compat/array/countBy.spec.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix(countBy): return a plain object from compat countBy\n\n## Summary\n\n`countBy` from `es-toolkit/compat` returns an object with a `null` prototype, while lodash returns a plain object. Anything the consumer does with the result that touches `Object.prototype` behaves differently from lodash — and in one case throws.\n\n```ts\nimport { countBy } from 'es-toolkit/compat';\nimport lodash from 'lodash';\n\nconst words = ['one', 'two', 'three'];\n\nObject.getPrototypeOf(lodash.countBy(words, 'length')); // Object.prototype\nObject.getPrototypeOf(countBy(words, 'length'));        // null\n\nconst counts = countBy(words, 'length');\ncounts instanceof Object;                // false  (lodash: true)\ntypeof counts.hasOwnProperty;            // 'undefined'  (lodash: 'function')\n`${counts}`;                             // TypeError: Cannot convert object to primitive value\n```\n\nThe `TypeError` is the sharpest edge: interpolating the result into a string, or anything else that invokes `toString` — a logger, a template, `String(counts)` — throws on a value that works under lodash. `counts instanceof Object` returning `false` is the kind of thing a downstream type guard trips over.\n\nIt is also inconsistent within compat itself. The nullish-collection branch already returns `{}`, so `countBy(null)` has `Object.prototype` while `countBy([])` does not. And the neighbouring aggregators, `groupBy` and `keyBy`, both return plain objects — `countBy` is the only one of the three that does not.\n\nI found this with a differential fuzz of `es-toolkit/compat` against lodash across ~10,500 calls; `countBy` accounted for 112 of the 136 mismatches, all of them this one prototype difference.\n\n## Changes\n\n- `src/compat/array/countBy.ts`: build the result on a plain object instead of `Object.create(null)`.\n  - Counts are read with `Object.hasOwn` rather than `result[key] ?? 0`, so an inherited member such as `constructor` or `toString` is not mistaken for an existing count. The existing `should only add values to own, not inherited, properties` test covers this and still passes.\n  - A `__proto__` key is written with `Object.defineProperty` rather than assignment, so it becomes an own property instead of replacing the prototype — matching lodash, which counts `__proto__` as an ordinary key.\n- `src/compat/array/countBy.spec.ts`: two tests, both failing before the change.\n  - the result is a plain object: prototype, `instanceof Object`, `hasOwnProperty`, string interpolation, and the empty-collection case.\n  - a `__proto__` key is counted as an own property and leaves the prototype intact.\n\nThe main `es-toolkit` `countBy` is unaffected; it already returns a plain object.",
+      "leakage": {
+        "maxMatch": 0,
+        "flagged": false
+      }
+    },
+    {
+      "number": 2074,
+      "url": "https://github.com/toss/es-toolkit/pull/2074",
+      "title": "fix[DeepPartial, DeepReadonly]: preserve branded primitive types",
+      "author": "Tnalxmsk",
+      "createdAt": "2026-08-31T07:09:52Z",
+      "mergedAt": "2026-09-10T09:37:02Z",
+      "mergeSha": "2b60bce52f3bbbba9f58c41113ded51bb3a3b9e8",
+      "headSha": "4aceadac96738585f11853987336e4a33de0239b",
+      "prBaseSha": "3aee05dcbac60af8442f61fc1b7c70f7c0a616f7",
+      "files": [
+        {
+          "path": "docs/ja/types/reference/objects/DeepPartial.md",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "test": false
+        },
+        {
+          "path": "docs/ja/types/reference/objects/DeepReadonly.md",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "test": false
+        },
+        {
+          "path": "docs/ko/types/reference/objects/DeepPartial.md",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "test": false
+        },
+        {
+          "path": "docs/ko/types/reference/objects/DeepReadonly.md",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "test": false
+        },
+        {
+          "path": "docs/types/reference/objects/DeepPartial.md",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "test": false
+        },
+        {
+          "path": "docs/types/reference/objects/DeepReadonly.md",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "test": false
+        },
+        {
+          "path": "docs/zh_hans/types/reference/objects/DeepPartial.md",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "test": false
+        },
+        {
+          "path": "docs/zh_hans/types/reference/objects/DeepReadonly.md",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "test": false
+        },
+        {
+          "path": "src/types/DeepPartial.spec.ts",
+          "status": "modified",
+          "additions": 8,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/types/DeepPartial.ts",
+          "status": "modified",
+          "additions": 5,
+          "deletions": 3,
+          "test": false
+        },
+        {
+          "path": "src/types/DeepReadonly.spec.ts",
+          "status": "modified",
+          "additions": 8,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/types/DeepReadonly.ts",
+          "status": "modified",
+          "additions": 5,
+          "deletions": 3,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/types/DeepPartial.ts",
+        "src/types/DeepReadonly.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/types/DeepPartial.spec.ts",
+          "src/types/DeepReadonly.spec.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix[DeepPartial, DeepReadonly]: preserve branded primitive types\n\n## Summary\r\n\r\nThis PR follows up on the brand-preservation regression item listed under “Worth doing regardless” in [#1986](https://github.com/toss/es-toolkit/issues/1986).\r\n\r\n`DeepPartial` and `DeepReadonly` recursively transform object property values. When a plain object contains a branded primitive field, that field is processed through the object branch and is no longer equivalent to the original branded type.\r\n\r\n```ts\r\ntype UserId = string & { readonly __brand: 'UserId' };\r\n\r\ntype User = {\r\n  id: UserId;\r\n};\r\n\r\ntype PartialUser = DeepPartial<User>;\r\n// Expected: { id?: UserId }\r\n\r\ntype ReadonlyUser = DeepReadonly<User>;\r\n// Expected: { readonly id: UserId }\r\n```\r\n\r\nThe shared `Primitive` type introduced in [[#2044](https://github.com/toss/es-toolkit/pull/2044)](https://github.com/toss/es-toolkit/pull/2044) provides a common terminal condition for these recursive utilities. Primitive types, including branded primitive types, can therefore pass through without being recursively mapped as objects.\r\n\r\n## Changes\r\n\r\n- Use the existing `Primitive` type as a terminal condition in `DeepPartial` and `DeepReadonly`.\r\n- Add type-level regression tests covering both direct and nested branded primitive inputs.\r\n- Replace the explicit `any[]` function constraints with `never[]`, preserving parameterized function types without lint warnings.\r\n- Update the related reference documentation in English, Korean, Japanese, and Simplified Chinese.\r\n\r\n## Implementation notes\r\n\r\nThis is a type-only change and does not affect runtime behavior. Reusing the existing `Primitive` type avoids duplicating the primitive union across both utilities.\r\n\r\nThe `never[]` function constraint still matches arbitrary function signatures in the conditional type while avoiding an explicit `any`.",
+      "leakage": {
+        "maxMatch": 56,
+        "flagged": true
+      }
+    },
+    {
+      "number": 2095,
+      "url": "https://github.com/toss/es-toolkit/pull/2095",
+      "title": "fix[pull, pullAll, pullAllBy, remove]: handle nullish inputs like lodash",
+      "author": "Archibald1948",
+      "createdAt": "2026-09-11T01:30:28Z",
+      "mergedAt": "2026-09-11T05:51:06Z",
+      "mergeSha": "9c6ca7dcbec5548bac4bd141b58fb231994ec12a",
+      "headSha": "817e6e1c76db62be097d953d270089fffab9e12f",
+      "prBaseSha": "2b60bce52f3bbbba9f58c41113ded51bb3a3b9e8",
+      "files": [
+        {
+          "path": "src/compat/array/pull.spec.ts",
+          "status": "modified",
+          "additions": 14,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/array/pull.ts",
+          "status": "modified",
+          "additions": 4,
+          "deletions": 0,
+          "test": false
+        },
+        {
+          "path": "src/compat/array/pullAll.spec.ts",
+          "status": "modified",
+          "additions": 14,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/array/pullAll.ts",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 2,
+          "test": false
+        },
+        {
+          "path": "src/compat/array/pullAllBy.spec.ts",
+          "status": "modified",
+          "additions": 24,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/array/pullAllBy.ts",
+          "status": "modified",
+          "additions": 4,
+          "deletions": 0,
+          "test": false
+        },
+        {
+          "path": "src/compat/array/remove.spec.ts",
+          "status": "modified",
+          "additions": 6,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/array/remove.ts",
+          "status": "modified",
+          "additions": 4,
+          "deletions": 0,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/compat/array/pull.ts",
+        "src/compat/array/pullAll.ts",
+        "src/compat/array/pullAllBy.ts",
+        "src/compat/array/remove.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/compat/array/pull.spec.ts",
+          "src/compat/array/pullAll.spec.ts",
+          "src/compat/array/pullAllBy.spec.ts",
+          "src/compat/array/remove.spec.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix[pull, pullAll, pullAllBy, remove]: handle nullish inputs like lodash\n\n## The difference (as code)\n\n`pull`, `pullAll`, `pullAllBy` and `remove` in `es-toolkit/compat` throw on a nullish array, where lodash returns it unchanged:\n\n```js\npull(null, 1);             // lodash: null        es-toolkit: TypeError: Cannot read properties of null (reading 'length')\npull(undefined, 1);        // lodash: undefined   es-toolkit: TypeError\npullAll(null, [1]);        // lodash: null        es-toolkit: TypeError\npullAllBy(undefined, [1]); // lodash: undefined   es-toolkit: TypeError\nremove(null, isEven);      // lodash: []          es-toolkit: TypeError: Cannot read properties of null (reading 'slice')\n```\n\n`pullAllBy` also throws when `values` is left out, even though its signature declares `values?` as optional:\n\n```js\npullAllBy([1, 2, 1]);      // lodash: [1, 2, 1]   es-toolkit: TypeError: undefined is not iterable\n```\n\nThis is the kind of call that shows up in real code, e.g. `pull(user.tags, 'draft')` where `tags` may be missing.\n\n## Cause\n\nLodash puts one guard in front of the whole family:\n\n```js\nfunction pullAll(array, values) {\n  return (array && array.length && values && values.length)\n    ? basePullAll(array, values)\n    : array;\n}\n// pullAllBy / pullAllWith: the same guard. pull = baseRest(pullAll).\n\nfunction remove(array, predicate) {\n  var result = [];\n  if (!(array && array.length)) {\n    return result;\n  }\n  // ...\n}\n```\n\nIn compat, only `pullAllWith` has an equivalent guard:\n\n```js\nif (array?.length == null || values?.length == null) {\n  return array;\n}\n```\n\nThe other three do not:\n\n- `pull` forwards straight to the strict `es-toolkit` `pull`, which reads `arr.length`.\n- `pullAll` guards `values` (#1962) but not `array`.\n- `pullAllBy` guards neither and starts with `Array.from(valuesToRemove)`.\n- `remove` forwards straight to the strict `es-toolkit` `remove`, which calls `arr.slice()`.\n\n## Changes\n\nUse `pullAllWith`'s guard in `pull`, `pullAll` and `pullAllBy`, and return `[]` from `remove` for the same condition (the value lodash's `remove` returns):\n\n```js\n// pull\nif (arr?.length == null) {\n  return arr;\n}\n\n// pullAll, pullAllBy\nif (arr?.length == null || valuesToRemove?.length == null) {\n  return arr;\n}\n\n// remove\nif (arr?.length == null) {\n  return [];\n}\n```\n\nIn `pullAll` this replaces the existing `isNil(valuesToRemove)` check, which the new guard already covers.\n\nTwo side effects, both toward lodash, called out so they are not a surprise:\n\n1. **Values without a `length` are no longer mutated.** Previously `pull({ a: 1 }, 1)` returned the object with a `length: 0` property stamped onto it. It is now returned untouched, as in lodash.\n2. **A `Set` passed as `values` is now ignored.** Previously `pullAll([1, 2, 3], new Set([1]))` spread the Set with `Array.from` and returned `[2, 3]`. Lodash (and compat's own `pullAllWith`) only read array-like `values`, so it now returns `[1, 2, 3]`. A `Set` is not assignable to the declared `ArrayLike<T>`, so this is only reachable from plain JS or through a cast.\n\n## Verification\n\nFocused grid against `lodash@4.18.1` (nullish, empty and non-empty arrays x omitted / `undefined` / `null` / `[]` / `[1]` values, 92 calls, comparing both the return value and the mutated array):\n\n| | mismatches |\n| --- | --- |\n| before | 44 / 92 (all \"es-toolkit throws, lodash returns\") |\n| after | 0 / 92 |\n\nBroad sweep over the five functions (`pull`, `pullAll`, `pullAllBy`, `pullAllWith`, `remove`) with every 1- and 2-argument combination of a 35-value pool (6,300 calls):\n\n| | mismatches |\n| --- | --- |\n| before | 3,698 |\n| after | 751 |\n\n2,947 calls fixed, **0 calls that matched before and mismatch now**, and the remaining 751 are byte-identical before and after. They are all strings, functions or array-like objects passed as the array (e.g. `pullAll('', [])`: lodash returns early on empty `values`, while compat carries on and throws when it assigns `length` on the string primitive). `pullAllBy`'s remaining set is exactly the same as `pullAllWith`'s, the sibling that already had this guard, so those are pre-existing and out of scope here.\n\nRegression tests were added to all four spec files. On `main` they fail with:\n\n```\nTypeError: Cannot read properties of null (reading 'length')\nTypeError: Cannot read properties of null (reading 'slice')\nTypeError: undefined is not iterable (cannot read property Symbol(Symbol.iterator))\nAssertionError: expected { a: 1, length: +0 } to deeply equal { a: 1 }\nAssertionError: expected [ 2, 3 ] to deeply equal [ 1, 2, 3 ]\n```\n\nFull suite: 714 files, 5037 passed / 2 skipped. `tsc --noEmit` clean, `yarn lint` 0 errors (no new warnings in the touched files), type-tests pass.\n\n## Benchmarks\n\nThe guard is one optional-chained `length` check per call. Interleaved A/B (`fix`, then `main`, five alternating rounds), median of the paired per-round deltas:\n\n| benchmark | main (hz) | fix (hz) | delta |\n| --- | ---: | ---: | ---: |\n| `pull` — array size 100 | 546,614 | 548,697 | +0.5% |\n| `pull` — array size 1,000 | 47,913 | 47,876 | +0.9% |\n| `pull` — array size 10,000 | 2,736 | 2,720 | +0.1% |\n| `pullAllBy` | 3,707,047 | 3,698,570 | -0.3% |\n| *control* `lodash/pull` — size 100 / 1,000 / 10,000 | | | -0.9% / -0.2% / +0.4% |\n| *control* `lodash/pullAllBy` | | | -0.1% |\n\nAll within +/-1%, the same band as the untouched lodash controls, so no measurable change. (`pull.bench.ts` labels its compat benchmark `es-toolkit/pull`, but it imports from `es-toolkit/compat`.) `pullAll` and `remove` have no benchmark files.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nhttps://claude.ai/code/session_0129BhQdChg7wJry7bWvRHHm",
+      "leakage": {
+        "maxMatch": 76,
+        "flagged": true
+      }
+    },
+    {
+      "number": 2098,
+      "url": "https://github.com/toss/es-toolkit/pull/2098",
+      "title": "fix[xorBy, xorWith]: ignore the iteratee and comparator for a single array like lodash",
+      "author": "Archibald1948",
+      "createdAt": "2026-09-12T11:14:26Z",
+      "mergedAt": "2026-09-13T08:34:45Z",
+      "mergeSha": "0d288f69839a145efcda264fce819d8c8a451b9b",
+      "headSha": "d4afbfc2022713dbda50f780eb99a3e8fe622a74",
+      "prBaseSha": "9c6ca7dcbec5548bac4bd141b58fb231994ec12a",
+      "files": [
+        {
+          "path": "src/compat/array/xorBy.spec.ts",
+          "status": "modified",
+          "additions": 10,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/array/xorBy.ts",
+          "status": "modified",
+          "additions": 5,
+          "deletions": 0,
+          "test": false
+        },
+        {
+          "path": "src/compat/array/xorWith.spec.ts",
+          "status": "modified",
+          "additions": 12,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/array/xorWith.ts",
+          "status": "modified",
+          "additions": 5,
+          "deletions": 0,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/compat/array/xorBy.ts",
+        "src/compat/array/xorWith.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/compat/array/xorBy.spec.ts",
+          "src/compat/array/xorWith.spec.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix[xorBy, xorWith]: ignore the iteratee and comparator for a single array like lodash\n\n> [!NOTE]\n> **Update after merge — the description below does not match the merged code.**\n>\n> This PR was merged with the maintainer's commit d4afbfc2 on top, so the final code in both functions is:\n>\n> [diff-like code block removed]\n>\n> The following parts of this description refer to a later revision of mine that was **never pushed** (its push was rejected because d4afbfc2 had already landed): the `uniqToolkit(flattenArrayLike(arrays))` code under \"Changes\", the statement that the current code reads array-likes by index, the array-like regression tests, and the benchmark table.\n>\n> What still holds for the merged code: the differential results (0 / 1,260 mismatches against lodash for `xor`, `xorBy` and `xorWith`) and the correction about the first revision.\n>\n> One difference remains, and it is the same as compat's own `uniq` and `xor`: the merged code reads array-likes through `Array.from`, so an array-like whose `Symbol.iterator` disagrees with its indices still differs from lodash (`['b']` instead of `['a']` for the example below).\n\n---\n\n## The difference (as code)\n\nGiven a single array, `xorBy` and `xorWith` in `es-toolkit/compat` apply the iteratee / comparator, while lodash ignores it:\n\n```js\nxorBy([2.1, 2.3], Math.floor);        // lodash: [2.1, 2.3]              es-toolkit: [2.1]\nxorBy([{ x: 1 }, { x: 1 }], 'x');     // lodash: [{ x: 1 }, { x: 1 }]    es-toolkit: [{ x: 1 }]\nxorWith([{ a: 1 }, { a: 1 }], isEqual); // lodash: [{ a: 1 }, { a: 1 }]  es-toolkit: [{ a: 1 }]\nxorWith([1, 2, 3], (a, b) => a === b);  // lodash: [1, 2, 3]             es-toolkit: [1]\n```\n\nThe last one is the clearest: with `(a, b) => a === b` nothing in `[1, 2, 3]` is a duplicate, yet compat collapses the array to `[1]`.\n\n## Cause\n\n`baseXor` short-circuits before the iteratee and the comparator are ever used:\n\n```js\nfunction baseXor(arrays, iteratee, comparator) {\n  var length = arrays.length;\n  if (length < 2) {\n    return length ? baseUniq(arrays[0]) : [];   // <- neither argument is passed on\n  }\n  // ...\n  return baseUniq(baseFlatten(result, 1), iteratee, comparator);\n}\n```\n\nBoth `xorBy` and `xorWith` route through it (`baseXor(arrayFilter(arrays, isArrayLikeObject), getIteratee(iteratee, 2))` and `baseXor(..., undefined, comparator)`), so for one array lodash falls back to a plain `baseUniq`: SameValueZero de-duplication with `-0` normalized, and no iteratee.\n\n`es-toolkit/compat` instead always builds the union / intersection / difference chain, which does apply the iteratee or comparator:\n\n```js\nconst union = unionBy(...arrays, mapper);\nconst intersections = windowed(arrays, 2).map(([arr1, arr2]) => intersectionBy(arr1, arr2, mapper));\n\nreturn differenceBy(union, unionBy(...intersections, mapper), mapper);\n```\n\nWith a single array `windowed(arrays, 2)` is empty, so this reduces to `unionBy(array, mapper)` — a de-duplication *by the iteratee*, which is not what lodash does.\n\n## Changes\n\nReturn early when fewer than two array-like arguments remain, reproducing `baseUniq(arrays[0])`:\n\n```js\nconst arrays = values.filter(isArrayLikeObject) as [any];\n\n// With fewer than two arrays lodash's `baseXor` returns `baseUniq(arrays[0])`,\n// dropping the iteratee. `baseUniq` reads elements by index and de-duplicates\n// with SameValueZero, normalizing `-0`, which is what a `Set` does.\nif (arrays.length < 2) {\n  return uniqToolkit(flattenArrayLike(arrays));\n}\n```\n\nTwo details matter here, both of which an earlier revision of this PR got wrong:\n\n1. **Read by index.** `baseUniq` reads `array[i]`. `flattenArrayLike` (the helper `unionBy` / `unionWith` already use) copies by index, so an array-like whose `Symbol.iterator` disagrees with its indices is still read the lodash way.\n2. **One `Set`.** The strict `uniq` is `[...new Set(arr)]`, which is SameValueZero with `-0` normalized and first-occurrence order — the same result as `baseUniq`, with a single allocation.\n\nWith no arrays at all, `flattenArrayLike([])` is `[]`, matching `length ? baseUniq(arrays[0]) : []`. The two-or-more-array path is untouched.\n\n## Verification\n\nDifferential against `lodash@4.18.1`, every 1- and 2-argument combination of a 35-value pool (1,260 calls per function):\n\n| | `xorBy` | `xorWith` | `xor` (untouched) |\n| --- | --- | --- | --- |\n| before | 102 / 1,260 | 4 / 1,260 | 0 / 1,260 |\n| after | **0 / 1,260** | **0 / 1,260** | 0 / 1,260 |\n\nA focused set of 20 calls (single array with and without an iteratee, `-0`, `NaN`, duplicates, no arrays at all, and two-array calls that must not change) goes from 9 mismatches to 0.\n\n**Correction to the first revision.** It delegated to `xor(...arrays)` and I wrote that no previously-matching call mismatched afterwards. Copilot's review pointed out that `xor` reads through `Array.from`, i.e. the iterator, and that did regress an array-like whose iterator disagrees with its indices — a case my value pool did not contain:\n\n```js\nconst arrayLike = { 0: 'a', length: 1, *[Symbol.iterator]() { yield 'b'; } };\n\nxorBy(arrayLike, x => x);\n// lodash: ['a']   main: ['a']   first revision: ['b']   now: ['a']\n```\n\nThe current code reads by index, and both spec files now pin this object.\n\nRegression tests were added to both spec files. On `main` the single-array tests fail with:\n\n```\nAssertionError: expected [ 2.1 ] to deeply equal [ 2.1, 2.3 ]\nAssertionError: expected [ { a: 1 } ] to deeply equal [ { a: 1 }, { a: 1 } ]\n```\n\nand on the first revision the array-like tests fail with:\n\n```\nAssertionError: expected [ 'b' ] to deeply equal [ 'a' ]\n```\n\nFull suite: 714 files, 5041 passed / 2 skipped. `tsc --noEmit` clean, `yarn lint` 0 errors (no new warnings in the touched files), type-tests pass.\n\n## Benchmarks\n\nInterleaved A/B (`fix`, then `main`, five alternating rounds), median of the paired per-round deltas. The existing benchmarks only cover the two-array path, so I added a temporary local benchmark for the single-array path. Before every run the Vite dependency cache was cleared, and after every run I checked the pre-bundled `es-toolkit/compat` for which implementation had actually been measured (10/10 matched the intended side).\n\n| benchmark | main (hz) | fix (hz) | delta |\n| --- | ---: | ---: | ---: |\n| *single array* `xorBy`, 10 items | 967,116 | 2,767,538 | **+184%** |\n| *single array* `xorBy`, 1,000 items | 12,646 | 35,369 | **+178%** |\n| *single array* `xorWith`, 10 items | 2,150,657 | 2,573,311 | **+20%** |\n| *single array* `xorWith`, 1,000 items | 1,705 | 35,744 | **+1,997%** |\n| `xorBy` (2 arrays) | 1,105,968 | 1,078,839 | -2.0% |\n| `xorBy` — largeArray | 287 | 287 | +0.1% |\n| `xorWith` (2 arrays) | 1,710,252 | 1,691,604 | +1.0% |\n| `xorWith` — largeArray | 1.0 | 1.0 | +0.2% |\n| *control* `lodash/xorBy` (2 arrays / largeArray) | | | -0.5% / +0.3% |\n| *control* `lodash/xorWith` (2 arrays / largeArray) | | | -1.0% / -0.1% |\n\nThe single-array path is faster across the board, most of all with a comparator on larger arrays, where it no longer runs the O(n²) `unionWith` / `differenceWith` chain. The only code added to the two-array path is the `arrays.length < 2` check; small two-array `xorBy` came out 2.0% slower with all five rounds negative (-0.9% to -3.2%), slightly outside the controls' band, so I'm noting it rather than calling it noise.\n\n**About the benchmark table in the first revision:** those numbers showed no difference on any path, and they were wrong. The runs did not clear Vite's pre-bundled dependency cache, so both sides measured the same cached build. That is also how the xor-based version's 33% slowdown for a 10-item single array with a comparator went unnoticed; the cache-cleared runs caught it, which is why the current code uses `uniq` instead of `xor`.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nhttps://claude.ai/code/session_0129BhQdChg7wJry7bWvRHHm",
+      "leakage": {
+        "maxMatch": 0,
+        "flagged": false
+      }
+    },
+    {
+      "number": 2101,
+      "url": "https://github.com/toss/es-toolkit/pull/2101",
+      "title": "fix[forEach, forEachRight, forIn, forInRight, forOwn, forOwnRight, reduce, reduceRight]: resolve the iteratee like lodash",
+      "author": "Archibald1948",
+      "createdAt": "2026-09-15T03:29:19Z",
+      "mergedAt": "2026-09-15T03:57:11Z",
+      "mergeSha": "8d70a08d09944ae4857e9b8b5f7bbdb836e50d72",
+      "headSha": "c33a7322d85c71bba95cea7a50f410fe7ea29df1",
+      "prBaseSha": "0d288f69839a145efcda264fce819d8c8a451b9b",
+      "files": [
+        {
+          "path": "src/compat/array/forEach.spec.ts",
+          "status": "modified",
+          "additions": 30,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/array/forEach.ts",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 0,
+          "test": false
+        },
+        {
+          "path": "src/compat/array/forEachRight.spec.ts",
+          "status": "modified",
+          "additions": 30,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/array/forEachRight.ts",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 0,
+          "test": false
+        },
+        {
+          "path": "src/compat/array/reduce.spec.ts",
+          "status": "modified",
+          "additions": 10,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/array/reduce.ts",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 0,
+          "test": false
+        },
+        {
+          "path": "src/compat/array/reduceRight.spec.ts",
+          "status": "modified",
+          "additions": 8,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/array/reduceRight.ts",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 0,
+          "test": false
+        },
+        {
+          "path": "src/compat/object/forIn.spec.ts",
+          "status": "modified",
+          "additions": 30,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/object/forIn.ts",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 0,
+          "test": false
+        },
+        {
+          "path": "src/compat/object/forInRight.spec.ts",
+          "status": "modified",
+          "additions": 30,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/object/forInRight.ts",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 0,
+          "test": false
+        },
+        {
+          "path": "src/compat/object/forOwn.spec.ts",
+          "status": "modified",
+          "additions": 31,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/object/forOwn.ts",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 0,
+          "test": false
+        },
+        {
+          "path": "src/compat/object/forOwnRight.spec.ts",
+          "status": "modified",
+          "additions": 30,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/object/forOwnRight.ts",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 0,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/compat/array/forEach.ts",
+        "src/compat/array/forEachRight.ts",
+        "src/compat/array/reduce.ts",
+        "src/compat/array/reduceRight.ts",
+        "src/compat/object/forIn.ts",
+        "src/compat/object/forInRight.ts",
+        "src/compat/object/forOwn.ts",
+        "src/compat/object/forOwnRight.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/compat/array/forEach.spec.ts",
+          "src/compat/array/forEachRight.spec.ts",
+          "src/compat/array/reduce.spec.ts",
+          "src/compat/array/reduceRight.spec.ts",
+          "src/compat/object/forIn.spec.ts",
+          "src/compat/object/forInRight.spec.ts",
+          "src/compat/object/forOwn.spec.ts",
+          "src/compat/object/forOwnRight.spec.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix[forEach, forEachRight, forIn, forInRight, forOwn, forOwnRight, reduce, reduceRight]: resolve the iteratee like lodash\n\n## The difference (as code)\n\nThe iteration functions below call their `iteratee` directly, so anything that is not a function throws, where lodash resolves it the way every other collection method does:\n\n```js\nforEach([1, 2, 3], null);                 // lodash: [1, 2, 3]        es-toolkit: TypeError: callback is not a function\nforOwn({ a: { x: 1 } }, 'x');             // lodash: { a: { x: 1 } }  es-toolkit: TypeError: iteratee is not a function\nreduce([1, 2, 3], null);                  // lodash: 1                es-toolkit: TypeError: iteratee is not a function\nreduce([{ a: 1 }, { a: 1 }], { a: 1 });   // lodash: true             es-toolkit: TypeError: iteratee is not a function\n```\n\nAffected: `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`, `reduce`, `reduceRight` (and the `each` / `eachRight` aliases).\n\nShorthands are not just tolerated by lodash, they are honoured. In the `forEach` family a property shorthand that returns `false` stops the iteration, exactly like a callback returning `false`:\n\n```js\nlet visited = 0;\nconst array = [{ a: false }, { get a() { visited++; return true; } }];\n\nforEach(array, 'a');\n// lodash: stops at the first element, visited === 0\n// es-toolkit: TypeError\n```\n\n## Cause\n\nIn lodash all eight go through `getIteratee`, i.e. `baseIteratee`:\n\n```js\nfunction forEach(collection, iteratee) {\n  var func = isArray(collection) ? arrayEach : baseEach;\n  return func(collection, getIteratee(iteratee, 3));\n}\n\nfunction forOwn(object, iteratee) {\n  return object && baseForOwn(object, getIteratee(iteratee, 3));\n}\n\nfunction reduce(collection, iteratee, accumulator) {\n  // ...\n  return func(collection, getIteratee(iteratee, 4), accumulator, initAccum, baseEach);\n}\n```\n\nIn compat they only default the parameter to `identity` and then call it, so `null` (not covered by a default parameter) and every shorthand reach a call on a non-function:\n\n```js\nexport function forOwn(object, iteratee = identity) {\n  // ...\n  if (iteratee(iterable[key], key, iterable) === false) {\n```\n\n`es-toolkit/compat` already has the `baseIteratee` equivalent, `iteratee()`, and `filter` / `partition` already resolve their predicate with it:\n\n```js\npredicate = iteratee(predicate);\n```\n\n## Changes\n\nResolve the iteratee once per call, right after the early return, the same way `filter` does:\n\n[diff-like code block removed]\n\n`iteratee()` returns a function argument unchanged and maps `null` / `undefined` to `identity`, so existing callers see no difference. Each file gains one import and one line.\n\n## Verification\n\nFocused grid against `lodash@4.18.1`: 10 functions x 6 collections x 8 iteratee values (omitted, `undefined`, `null`, `0`, `'a'`, `{ a: 1 }`, `['a', 1]`, `true`), 480 calls:\n\n| | mismatches |\n| --- | --- |\n| before | 240 / 480 (every one \"lodash returns, es-toolkit throws\") |\n| after | **0 / 480** |\n\nBroad sweep, every 1- and 2-argument combination of a 35-value pool (1,260 calls per function):\n\n| | `forEach` family (8 incl. aliases) | `reduce` / `reduceRight` |\n| --- | --- | --- |\n| before | 352 / 1,260 each | 224 / 1,260 each |\n| after | **0 / 1,260 each** | 21 / 1,260 each |\n\nNo call that matched before mismatches now. The 21 left for `reduce` / `reduceRight` are all `[]`, `Map` or `Set` used as the iteratee. Those used to throw; now they return what compat's shared `iteratee()` produces for those values, which is the same known difference `filter`, `find` and the other shorthand-taking functions already have against lodash — out of scope here. The `forEach` family shows no such residue because it only looks at whether the result is `false`.\n\nRegression tests were added to all eight spec files (14 tests). On `main` they fail with:\n\n```\nTypeError: iteratee is not a function\nTypeError: callback is not a function\n```\n\nFull suite: 714 files, 5053 passed / 2 skipped. `tsc --noEmit` clean, `yarn lint` 0 errors (no new warnings in the touched files), type-tests pass.\n\n## Benchmarks\n\nThe change adds one `iteratee()` call per invocation (a `null` check and a `typeof` switch), independent of collection size.\n\nInterleaved A/B (`fix`, then `main`, seven alternating rounds) on the three hottest benchmarks. Before every run the Vite dependency cache was cleared, and after every run I checked the pre-bundled `es-toolkit/compat` for which implementation had actually been measured (14/14 matched the intended side). Each compat row is divided by the lodash row of the same group in the same round to cancel machine drift; the table shows the median of the seven normalized deltas.\n\n| benchmark | normalized delta |\n| --- | ---: |\n| `forEach` | -0.8% |\n| `forEach` — largeArray | -3.8% |\n| `forEach` — object | 0.0% |\n| `forEach` — string | -2.4% |\n| `forOwn` | -0.8% |\n| `reduce` | -4.7% |\n| `reduce` — large array | -1.1% |\n\nI want to be upfront that these runs were noisy: the machine was under other load at the time (load average around 5 on 8 cores), and individual rounds swung by up to +/-50% even on the lodash controls. The large-array rows are the clearest indicator of the noise floor — a constant per-call cost cannot move a benchmark that spends ~75µs per call by 3.8% — so I read this as no consistent effect within roughly +/-5%, not as a measured slowdown. `filter` and `partition` already resolve their predicate the same way. Happy to re-run on a quiet machine if you'd like tighter numbers.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nhttps://claude.ai/code/session_0129BhQdChg7wJry7bWvRHHm",
+      "leakage": {
+        "maxMatch": 51,
+        "flagged": true
+      }
+    },
+    {
+      "number": 2103,
+      "url": "https://github.com/toss/es-toolkit/pull/2103",
+      "title": "fix(words): match titlecase letters, aligning with lodash",
+      "author": "mariazuheros",
+      "createdAt": "2026-09-15T11:14:38Z",
+      "mergedAt": "2026-09-15T11:56:40Z",
+      "mergeSha": "301b0c914297324443e6332da6d35348adbd648b",
+      "headSha": "9cfd78ac7b3b0be16ba5769b7f40c45c995a9028",
+      "prBaseSha": "8d70a08d09944ae4857e9b8b5f7bbdb836e50d72",
+      "files": [
+        {
+          "path": "benchmarks/bundle-size/camelCase.spec.ts",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "test": true
+        },
+        {
+          "path": "src/compat/string/words.spec.ts",
+          "status": "modified",
+          "additions": 6,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/string/words.ts",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/compat/string/words.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "benchmarks/bundle-size/camelCase.spec.ts",
+          "src/compat/string/words.spec.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix(words): match titlecase letters, aligning with lodash\n\n## Summary\n\n`words` (and everything built on it: `camelCase`, `kebabCase`, `snakeCase`, `startCase`, `lowerCase`, `upperCase`) recognized uppercase (`\\p{Lu}`) and lowercase (`\\p{Ll}`) letters, but not **titlecase** letters (Unicode category `Lt`). As a result, titlecase letters were silently dropped instead of being treated as part of a word, which diverges from lodash.\n\nAffected characters are the Latin digraphs `ǅ ǈ ǋ ǲ` and the Greek titlecase forms `ᾈ..ᾯ` (31 code points in total).\n\n```ts\nwords('ǅ');        // es-toolkit: []              lodash: ['ǅ']\nwords('fooǅBar');  // es-toolkit: ['foo', 'Bar']  lodash: ['fooǅ', 'Bar']\n```\n\n## Fix\n\nAdd `\\p{Lt}` to the misc-letter class in the Unicode word pattern:\n\n[diff-like code block removed]\n\nThis mirrors lodash's `rsMisc`, where a titlecase letter is valid in both the upper and lower word positions. I verified the placement differentially against lodash 4.x: putting `\\p{Lt}` in the misc class reproduces lodash exactly across all 31 titlecase code points and mixed strings (0 mismatches), whereas treating it as a plain lowercase letter diverges on boundary cases.\n\nBecause `camelCase`, `kebabCase`, `snakeCase`, `lowerCase` and `upperCase` all build on `words`, they line up with lodash for these characters too.\n\n## Tests\n\nAdded a `should match titlecase letters` case in `words.spec.ts` (red-green verified). Updated the `es-toolkit/compat` `camelCase` bundle-size snapshot, which grows by 7 bytes from the added property escape.",
+      "leakage": {
+        "maxMatch": 0,
+        "flagged": false
+      }
+    },
+    {
+      "number": 2102,
+      "url": "https://github.com/toss/es-toolkit/pull/2102",
+      "title": "fix(compat/words): keep combining marks attached to the letter they modify",
+      "author": "ssi02014",
+      "createdAt": "2026-09-15T04:43:37Z",
+      "mergedAt": "2026-09-16T00:10:37Z",
+      "mergeSha": "0a10a56dd9dfc4e636e180dc7e6eba6003c28e7a",
+      "headSha": "bffaa6d17909bce6a36124d9a476405ea37a36ef",
+      "prBaseSha": "301b0c914297324443e6332da6d35348adbd648b",
+      "files": [
+        {
+          "path": "benchmarks/bundle-size/camelCase.spec.ts",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "test": true
+        },
+        {
+          "path": "src/compat/string/words.spec.ts",
+          "status": "modified",
+          "additions": 18,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/string/words.ts",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 2,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/compat/string/words.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "benchmarks/bundle-size/camelCase.spec.ts",
+          "src/compat/string/words.spec.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix(compat/words): keep combining marks attached to the letter they modify\n\n## Summary\r\n\r\n`es-toolkit/compat`'s `words` drops or splits on Unicode combining marks (`\\p{M}`), so decomposed (NFD) text is not tokenized the way Lodash tokenizes it.\r\n\r\nThe Unicode word pattern matched `\\p{Lu}` / `\\p{Ll}` alone, and its \"misc\" branch only allowed a combining mark after an `\\p{Lm}`/`\\p{Lo}` base. A combining mark that follows a cased letter therefore matched nothing: it either ended the word early and was swallowed, or it broke one word into two.\r\n\r\nLodash does not have this problem because its `rsMisc` is a negated character class that already contains combining marks, so a mark following a letter keeps the match going.\r\n\r\n```ts\r\nconst str = 'café';\r\nconst nfdStr = str.normalize('NFD'); // 'cafe\\u0301', length: 5\r\nconst nfcStr = str.normalize('NFC'); // 'caf\\u00E9', length: 4\r\n\r\n_.words(nfcStr);     // lodash → ['café']\r\n_.words(nfdStr);     // lodash → ['café']\r\n\r\nwords(nfcStr);       // es-toolkit/compat(before) → ['café'] ✅\r\nwords(nfdStr);       // es-toolkit/compat(before) → ['cafe'] ← the accent is dropped\r\n```\r\n```ts\r\nconst str = 'abćdef';\r\nconst nfdStr = str.normalize('NFD'); // 'abc\\u0301def', length: 7\r\nconst nfcStr = str.normalize('NFC'); // 'ab\\u0107def', length: 6\r\n\r\n_.words(nfcStr);     // lodash → ['abćdef']\r\n_.words(nfdStr);     // lodash → ['abćdef']\r\n\r\nwords(nfcStr);       // es-toolkit/compat(before) → ['abćdef'] ✅\r\nwords(nfdStr);       // es-toolkit/compat(before) → ['abc', 'def'] ← split at the mark\r\n```\r\n\r\nFull comparison on decomposed input:\r\n\r\n| input (NFD) | lodash | compat (before) | compat (after) |\r\n| --- | --- | --- | --- |\r\n| 'café' | `['café']` | `['cafe']` | `['café']` |\r\n| 'naïve' | `['naïve']` | `['nai', 've']` | `['naïve']` |\r\n| 'Nguyễn' | `['Nguyễn']` | `['Nguye', 'n']` | `['Nguyễn']` |\r\n| 'abćdef' | `['abćdef']` | `['abc', 'def']` | `['abćdef']` |\r\n| 'été 2024' | `['été', '2024']` | `['e', 'te', '2024']` | `['été', '2024']` |\r\n\r\n💡An accented character can be encoded two ways that are visually identical but are different strings in JavaScript:\r\n- NFC (precomposed): é = U+00E9 — one code point\r\n- NFD (decomposed): é = e (U+0065) + U+0301 (COMBINING ACUTE ACCENT) — two code points\r\n\r\nThe decomposed form is always the one that breaks. The NFC spellings(`caf\\u00E9` and `na\\u00EFve`) pass the same pattern cleanly, so this bug only reproduces depending on which normalization form the input arrived in.\r\n\r\n## Question\r\n`src/string/words` (the non-compat entry point) has the same behavior today — it uses `CASE_SPLIT_PATTERN`, which also matches `\\p{Lu}`/`\\p{Ll}` without allowing trailing combining marks, so `words('cafe\\u0301')` splits or drops the mark there as well. Since that function is not bound by Lodash compatibility, should it match Lodash here too, or is keeping the current behavior intentional?\r\n\r\n```ts\r\nconst str = 'café';\r\nconst nfdStr = str.normalize('NFD'); // 'cafe\\u0301', length: 5\r\nconst nfcStr = str.normalize('NFC'); // 'caf\\u00E9', length: 4\r\n\r\nwords(nfcStr);       // es-toolkit/words(before) → ['café'] ✅\r\nwords(nfdStr);       // es-toolkit/words(before) → ['cafe'] ← the accent is dropped \r\n```\r\n```ts\r\nconst str = 'abćdef';\r\nconst nfdStr = str.normalize('NFD'); // 'abc\\u0301def', length: 7\r\nconst nfcStr = str.normalize('NFC'); // 'ab\\u0107def', length: 6\r\n\r\nwords(nfcStr);       // es-toolkit/compat(before) → ['abćdef'] ✅\r\nwords(nfdStr);       // es-toolkit/words(before) → ['abc', 'def'] ← split at the mark \r\n```\r\n\r\nBased on the existing test suite, retaining accents appears to be the intended design. Therefore, handling NFD-formatted strings properly seems appropriate:\r\n\r\n```ts\r\nit('should match accented letters', () => {\r\n  expect(words('Lunedì 18 Set')).toEqual(['Lunedì', '18', 'Set']);\r\n});\r\n```\r\n```ts\r\nit('should match accented letters', () => {\r\n  const str = 'Lunedì';\r\n  const nfdStr = str.normalize('NFD'); // 'Lunedi\\u0301'\r\n  const nfcStr = str.normalize('NFC'); // 'Luned\\u00EC'\r\n\r\n  expect(words(`${nfcStr} 18 Set`)).toEqual([nfcStr, '18', 'Set']);\r\n  expect(words(`${nfdStr} 18 Set`)).toEqual([nfdStr, '18', 'Set']); // This test case should pass.\r\n  // (as-is) failure → ['Lunedi', '18', 'Set'] ← the accent is dropped \r\n});\r\n```\r\n\r\nI view this as a correctness issue rather than a mere compatibility one—in any tokenizer, a combining mark inherently belongs to the letter it modifies. For this reason, I'd lean toward fixing both.\r\n\r\nI intentionally left src/string/words.ts untouched in this PR to keep the scope focused, but I'm happy to extend the fix (along with matching tests and doc updates) if the maintainers agree.\r\n\r\n \r\n## Conclusion  \r\n<b>`src/string/words` can follow the es-toolkit team policy (ideally, I'd love to see it updated too!). However, since `compat` needs to stay compatible with `lodash`, shouldn't we definitely update `compat`? 👍 </b>",
+      "leakage": {
+        "maxMatch": 155,
+        "flagged": true
+      }
+    },
+    {
+      "number": 2100,
+      "url": "https://github.com/toss/es-toolkit/pull/2100",
+      "title": "fix(dedent): throw a TypeError for a malformed template literal like String.dedent",
+      "author": "raon0211",
+      "createdAt": "2026-09-13T08:32:35Z",
+      "mergedAt": "2026-09-16T00:11:16Z",
+      "mergeSha": "f348be3ad50acb1eb7fd25f489384a7ab0ebcc30",
+      "headSha": "d2d52212bcc1cb3c8e86bc4d85096ba5adb5a9cf",
+      "prBaseSha": "9c6ca7dcbec5548bac4bd141b58fb231994ec12a",
+      "files": [
+        {
+          "path": "docs/ja/reference/string/dedent.md",
+          "status": "modified",
+          "additions": 26,
+          "deletions": 1,
+          "test": false
+        },
+        {
+          "path": "docs/ko/reference/string/dedent.md",
+          "status": "modified",
+          "additions": 26,
+          "deletions": 1,
+          "test": false
+        },
+        {
+          "path": "docs/reference/string/dedent.md",
+          "status": "modified",
+          "additions": 26,
+          "deletions": 1,
+          "test": false
+        },
+        {
+          "path": "docs/zh_hans/reference/string/dedent.md",
+          "status": "modified",
+          "additions": 26,
+          "deletions": 1,
+          "test": false
+        },
+        {
+          "path": "src/string/dedent.spec.ts",
+          "status": "modified",
+          "additions": 66,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/string/dedent.ts",
+          "status": "modified",
+          "additions": 33,
+          "deletions": 0,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/string/dedent.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/string/dedent.spec.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix(dedent): throw a TypeError for a malformed template literal like String.dedent\n\n## Summary\n\n`dedent` accepts any template literal today, even one whose opening or closing line has content. The [TC39 `String.dedent` proposal](https://tc39.es/proposal-string-dedent/) rejects such templates with a `TypeError` (`RemoveOpeningAndClosingLines`), so code that works with `dedent` today would break once it is switched to `String.dedent`.\n\nThis PR makes the tagged-template and composed-tag paths follow the proposal: the opening line (right after the opening backtick) and the closing line (right before the closing backtick) may contain only whitespace. Otherwise a `TypeError` is thrown.\n\n```ts\ndedent`hello\n  world\n`;\n// TypeError: Invalid opening line.\n\ndedent`\n  hello\n  world`;\n// TypeError: Invalid closing line.\n```\n\n## Changes\n\n- Add `assertTemplateShape`, which inspects only the static parts of the template (`strings[0]` and `strings[strings.length - 1]`), so interpolated values never affect the check. It runs for both `` dedent`…` `` and `dedent(tagFn)`.\n- Like the proposal, a template with no newline at all, one that starts with `${…}`, or one that ends with `${…}` right before the closing backtick also throws.\n- `dedent(str)` with a plain string is unchanged; `String.dedent` only defines the tag form.\n- One deliberate difference from the proposal: an opening line that contains only whitespace (e.g. trailing spaces after the opening backtick) is still accepted, as before. The proposal throws there. Being more lenient keeps every template that `String.dedent` accepts working here, while avoiding a runtime error caused by invisible whitespace.\n- The error messages mirror core-js's `String.dedent` polyfill (`Invalid opening line` / `Invalid closing line`).\n- Docs (`en`, `ko`, `ja`, `zh_hans`) describe the required shape and gain a Throws section.\n\n## Tests\n\nAdded to `src/string/dedent.spec.ts`:\n\n- whitespace-only opening line is still accepted\n- opening line with content, template with no newline, template starting with an interpolation → `TypeError`\n- closing line with content, template ending with an interpolation → `TypeError`\n- plain-string form is not checked\n- composed tag function throws for the same shapes\n\n## Validation\n\n- `yarn vitest run src/string` → 23 files, 225 tests passed\n- `yarn eslint` on touched files → clean\n- `yarn tsc --noEmit` → clean\n\n## Comparison with core-js\n\nRan the same templates through `core-js@3.50.0` (`core-js/full/string/dedent`) and this implementation. All content-on-opening/closing-line, no-newline, starts-with-`${}` and ends-with-`${}` cases throw in both. Remaining differences:\n\n- Whitespace-only opening line: core-js throws, this PR accepts (deliberate, see above).\n- U+2028 / U+2029 as line terminators: core-js treats them as newlines, es-toolkit's `dedent` only understands `\\n` (as it already did before this PR).\n- core-js inspects `strings.raw`, this PR inspects the cooked strings, so an escaped `\\n` written in source counts as a newline here but not in core-js.\n\n## Notes\n\nThis is a behavior change for templates that were previously accepted. No usage inside the repo is affected. Related: #2099 aligns interpolation handling with the proposal; this PR is independent of it and touches different parts of `dedent.ts`.",
+      "leakage": {
+        "maxMatch": 53,
+        "flagged": true
+      }
+    },
+    {
+      "number": 2099,
+      "url": "https://github.com/toss/es-toolkit/pull/2099",
+      "title": "fix(dedent): keep interpolated values out of the indentation calculation",
+      "author": "MFA-G",
+      "createdAt": "2026-09-13T01:23:04Z",
+      "mergedAt": "2026-09-17T00:00:21Z",
+      "mergeSha": "a7c2398838cd6fed5988b7b4447747a7287bbd71",
+      "headSha": "c6f8f2066eb00b2a591d0a7e54ed4d2d2c3cfcd4",
+      "prBaseSha": "f348be3ad50acb1eb7fd25f489384a7ab0ebcc30",
+      "files": [
+        {
+          "path": "docs/ja/reference/string/dedent.md",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "test": false
+        },
+        {
+          "path": "docs/ko/reference/string/dedent.md",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "test": false
+        },
+        {
+          "path": "docs/reference/string/dedent.md",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 1,
+          "test": false
+        },
+        {
+          "path": "docs/zh_hans/reference/string/dedent.md",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "test": false
+        },
+        {
+          "path": "src/string/dedent.spec.ts",
+          "status": "modified",
+          "additions": 57,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/string/dedent.ts",
+          "status": "modified",
+          "additions": 31,
+          "deletions": 8,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/string/dedent.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "src/string/dedent.spec.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix(dedent): keep interpolated values out of the indentation calculation\n\n## Summary\n\n`dedent` currently concatenates the interpolated values into the text **before** computing the common indentation. As a result, any value that contains a line break, or that sits on an indented line, distorts the indentation calculation.\n\n```ts\nconst value = 'a\\nb';\n\ndedent`\n  hello ${value}\n  world\n`;\n// actual:   '      hello a\\nb\\n      world'   ← nothing is dedented at all\n// expected: 'hello a\\nb\\nworld'\n```\n\nWhat happens: after substitution the text contains the line `b`, which has zero indentation, so the common indent becomes `0` and none of the template's own indentation is removed.\n\nThe same class of bug hits the composed-tag path (`dedent(tagFn)`): it joins the static parts with `\\x00` and dedents the joined string, so a `\\x00` that appears in a static part corrupts the split back into parts.\n\n## Changes\n\n- `dedent` now dedents the **static parts** of the template as a unit and substitutes the values afterwards, so an interpolated value can never influence the indentation calculation. This matches the behaviour of [`dedent`](https://github.com/dmnd/dedent) and the [TC39 `String.dedent` proposal](https://github.com/tc39/proposal-string-dedent), where only the template's own strings take part in dedenting.\n- The join placeholder is now chosen so that it does not occur in the static parts (it grows from `\\x00` until it is unique), which fixes the corrupted round-trip in the composed-tag path.\n- Both the tagged-template path and the composed-tag path share the same `dedentParts` helper, so they stay consistent.\n\nNote that an interpolation still counts as ordinary content of its own line, so the leading indentation of a line ending in `${…}` is preserved relative to the rest, e.g.:\n\n```ts\ndedent`\n  hello\n    ${'x'}\n`; // 'hello\\n  x'\n```\n\n## Tests\n\nAdded cases to `src/string/dedent.spec.ts`:\n\n- multi-line interpolated value does not affect the common indentation\n- indented interpolation keeps its relative indentation\n- an interpolated value containing `\\x00` round-trips correctly\n- a static part containing `\\x00` round-trips correctly\n- composed tag function with a multi-line interpolation\n\nAll four new tagged-template tests fail on `main` and pass with this change.\n\n## Validation\n\n- `yarn vitest run src/string` → 23 files, 222 tests passed\n- `yarn lint` → 0 errors\n- `yarn tsc --noEmit` → clean\n- `yarn prettier --check` on the touched files → clean\n\nDocs (`en`, `ko`, `ja`, `zh_hans`) were updated where they described the old substitute-then-dedent order.",
+      "leakage": {
+        "maxMatch": 0,
+        "flagged": false
+      }
+    },
+    {
+      "number": 2110,
+      "url": "https://github.com/toss/es-toolkit/pull/2110",
+      "title": "fix(compat/words): match emoji sequences, non-ASCII numerals and symbols",
+      "author": "ssi02014",
+      "createdAt": "2026-09-18T03:20:47Z",
+      "mergedAt": "2026-09-19T08:19:20Z",
+      "mergeSha": "ee72fc74b763d8cb48095e1981a5bcef19ba5cee",
+      "headSha": "397bc2090f519edef93abc9c5df3fde68b8e5320",
+      "prBaseSha": "82ce4af4f35e4520e54594db9f1bbee03ee56b71",
+      "files": [
+        {
+          "path": "benchmarks/bundle-size/camelCase.spec.ts",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "test": true
+        },
+        {
+          "path": "src/compat/string/words.spec.ts",
+          "status": "modified",
+          "additions": 38,
+          "deletions": 0,
+          "test": true
+        },
+        {
+          "path": "src/compat/string/words.ts",
+          "status": "modified",
+          "additions": 17,
+          "deletions": 20,
+          "test": false
+        }
+      ],
+      "codeFiles": [
+        "src/compat/string/words.ts"
+      ],
+      "tests": {
+        "added": [],
+        "modified": [
+          "benchmarks/bundle-size/camelCase.spec.ts",
+          "src/compat/string/words.spec.ts"
+        ],
+        "removed": []
+      },
+      "issues": [],
+      "request": "fix(compat/words): match emoji sequences, non-ASCII numerals and symbols\n\n## Summary\r\n\r\n`words` in `es-toolkit/compat` matched emoji one code point at a time, matched digits only with `\\d`, and did not treat symbols as word characters. As a result emoji sequences were torn apart, non-ASCII numerals vanished, and strings like `a€b` were split at the symbol even though lodash keeps them as one word.\r\n\r\nThis PR makes three changes to the default pattern:\r\n\r\n1. **Emoji sequences are matched as one word.** The two bare `\\p{Emoji_Presentation}` / `\\p{Extended_Pictographic}` alternatives are replaced by an emoji-sequence pattern (`rEmojiPict`, `rEmojiAtom`, `rEmojiSeq`): regional indicator pairs, keycaps, and pictograph + modifier + tag, joined by ZWJ.\r\n2. **`rMisc` is widened to numbers and symbols.** It now also matches `\\p{N}` and `\\p{S}`, which lodash treats as word characters, while excluding Latin-1 non-characters, ASCII digits and pictographs.\r\n3. **The emoji alternative is placed ahead of the digit alternative** so keycaps such as `1️⃣` are not consumed by `\\d+` first.\r\n\r\n<br />\r\n\r\n## 1. Non-ASCII numerals\r\n\r\n[diff-like code block removed]\r\n\r\nlodash's `rsMisc` is a negated class, so every numeric character that is not an ASCII digit falls into it and becomes part of a word. `es-toolkit/compat` only listed letter categories, so Roman numerals, fractions, Arabic-Indic and full-width digits were dropped.\r\n\r\n`rMisc` now also matches `\\p{N}` (`Nd`, `Nl`, `No`). ASCII digits are excluded with `0-9` so they keep going through the digit and ordinal rules, and Latin-1 numerals such as `²` are excluded through `rNonCharLatin`, as in lodash.\r\n\r\n| Input | `es-toolkit/compat` (before) | lodash | `es-toolkit/compat` (after) |\r\n| --- | --- | --- | --- |\r\n| `words('ⅣⅤ')` | `[]` | `['ⅣⅤ']` | `['ⅣⅤ']` |\r\n| `words('⅓')` | `[]` | `['⅓']` | `['⅓']` |\r\n| `words('١٢٣')` | `[]` | `['١٢٣']` | `['١٢٣']` |\r\n| `words('٣ dogs')` | `['dogs']` | `['٣', 'dogs']` | `['٣', 'dogs']` |\r\n| `words('１２３')` | `[]` | `['１２３']` | `['１２３']` |\r\n| `words('٠1st')` | `['1st']` | `['٠', '1st']` | `['٠', '1st']` |\r\n| `words('٢nd')` | `['nd']` | `['٢nd']` | `['٢nd']` |\r\n| `words('x²')` | `['x']` | `['x']` | `['x']` |\r\n\r\n<br />\r\n\r\n## 2. Symbols as word characters\r\n\r\nThe same `rMisc` change also adds `\\p{S}` (`Sc`, `Sm`, `So`, `Sk`). lodash treats every symbol outside its ASCII/Latin-1 ranges as a word character, so `a€b` and `ⓐⓑ` are single words there. `es-toolkit/compat` treated symbols as neither word nor separator, which silently split the surrounding letters.\r\n\r\nTwo groups of symbols are excluded from `rMisc`:\r\n\r\n- Latin-1 symbols (`°`, `±`, `¢`, ...) through `rNonCharLatin`, which lodash never treats as part of a word.\r\n- Pictographs, through `rEmojiPict`, so that they are matched by the emoji rule below instead of being glued onto a word.\r\n\r\n| Input | `es-toolkit/compat` (before) | lodash | `es-toolkit/compat` (after) |\r\n| --- | --- | --- | --- |\r\n| `words('a€b')` | `['a', 'b']` | `['a€b']` | `['a€b']` |\r\n| `words('a→b')` | `['a', 'b']` | `['a→b']` | `['a→b']` |\r\n| `words('ⓐⓑ')` | `[]` | `['ⓐⓑ']` | `['ⓐⓑ']` |\r\n| `words('10°')` | `['10']` | `['10']` | `['10']` |\r\n\r\n<br />\r\n\r\n## 3. Emoji sequences\r\n\r\n```ts\r\n// A character that renders as an emoji.\r\nconst rEmojiPict = '(?:\\\\p{Emoji_Presentation}|\\\\p{Extended_Pictographic})';\r\n\r\n// Optional variation selector (U+FE0F) and skin tone modifier. (`☝🏻`, `❤️`)\r\nconst rEmojiMod = '\\\\uFE0F?\\\\p{Emoji_Modifier}?';\r\n\r\n// Tag characters. They are invisible and attach attributes to the preceding\r\n// emoji, e.g. the subdivision flags. (`🏴󠁧󠁢󠁥󠁮󠁧󠁿`)\r\nconst rEmojiTag = '[\\\\u{E0020}-\\\\u{E007F}]*';\r\n\r\nconst rEmojiAtom =\r\n  '(?:' +\r\n  [\r\n    // A pair of regional indicators. (`🇰🇷`)\r\n    '\\\\p{Regional_Indicator}{2}',\r\n    // A digit, `#` or `*`, an optional variation selector, and U+20E3. (`1️⃣`)\r\n    `[${rNumber}#*]\\\\uFE0F?\\\\u20E3`,\r\n    // A pictograph with optional modifier and tags. (`🚀`, `👋🏽`, `❤️`)\r\n    `${rEmojiPict}${rEmojiMod}${rEmojiTag}`,\r\n  ].join('|') +\r\n  ')';\r\n\r\n// Atoms joined by zero-width joiners form one emoji. (`👨‍👩‍👧`)\r\nconst rEmojiSeq = `${rEmojiAtom}(?:\\\\u200D${rEmojiAtom})*`;\r\n```\r\n\r\nAn atom is a regional indicator pair, a keycap, or a pictograph with an optional variation selector, skin tone modifier and tag sequence. A sequence is one or more atoms joined by ZWJ (`U+200D`). Note that `rEmojiMod` makes both the variation selector and the modifier optional on their own, so `❤️`, `👋🏽` and `☝️🏽` are all covered by one expression.\r\n\r\n| Input | `es-toolkit/compat` (before) | lodash | `es-toolkit/compat` (after) |\r\n| --- | --- | --- | --- |\r\n| `words('family 👨‍👩‍👧')` | `['family', '👨', '👩', '👧']` | `['family', '👨‍👩‍👧']` | `['family', '👨‍👩‍👧']` |\r\n| `words('wave 👋🏽')` | `['wave', '👋', '🏽']` | `['wave', '👋🏽']` | `['wave', '👋🏽']` |\r\n| `words('flag 🇰🇷')` | `['flag', '🇰', '🇷']` | `['flag', '🇰🇷']` | `['flag', '🇰🇷']` |\r\n| `words('🕵🏻‍♂️')` | `['🕵', '🏻', '♂']` | `['🕵🏻‍♂️']` | `['🕵🏻‍♂️']` |\r\n| `words('☀️ sun')` | `['☀', 'sun']` | `['☀️', 'sun']` | `['☀️', 'sun']` |\r\n\r\n<br />\r\n\r\n## 4. Rule order\r\n\r\n```ts\r\nfunction getUnicodeWordPattern(): RegExp {\r\n  if (rUnicodeWord == null) {\r\n    rUnicodeWord = RegExp(\r\n      [\r\n        ...\r\n        `${rNumber}*(?:1ST|2ND|3RD|(?![123])${rNumber}TH)(?=\\\\b|[a-z_])`,\r\n        `${rNumber}*(?:1st|2nd|3rd|(?![123])${rNumber}th)(?=\\\\b|[A-Z_])`,\r\n\r\n        // Placed before the digit rule so that keycaps (`1️⃣`) are not consumed by `\\d+` first.\r\n        rEmojiSeq,\r\n\r\n        `${rNumber}+`,\r\n      ].join('|'),\r\n      'gu'\r\n    );\r\n```\r\n\r\n<br />\r\n\r\n## Intentional differences from lodash\r\n\r\nThe following behaviors deliberately do not follow lodash. They come from lodash's Latin-only ranges rather than from a design decision, and following them would produce results that are wrong for the input.\r\n\r\n| Input | `es-toolkit/compat` (after) | lodash | Why |\r\n| --- | --- | --- | --- |\r\n| `words('1️⃣')` | `['1️⃣']` | `['1', '️⃣']` | lodash splits a keycap into the digit and a leftover enclosing mark. |\r\n| `words('🏴󠁧󠁢󠁥󠁮󠁧󠁿')` | `['🏴󠁧󠁢󠁥󠁮󠁧󠁿']` | `['🏴', '󠁧', '󠁢', '󠁥', '󠁮', '󠁧', '󠁿']` | lodash emits each invisible tag character as its own word. |\r\n| `words('µm')` | `['µm']` | `['m']` | `µ` is a letter (`Ll`); lodash drops it only because it sits in the Latin-1 range. |\r\n| `words('©2024')` | `['©', '2024']` | `['2024']` | `©` and `®` are pictographs and stay emoji, as in `es-toolkit` and the previous `compat` implementation. lodash drops them as Latin-1 non-characters. |\r\n| `words('ПриветМир')` | `['Привет', 'Мир']` | `['ПриветМир']` | Camel case is split with `\\p{Lu}` / `\\p{Ll}` in every script, not only Latin. (Unchanged in this PR.) |",
+      "leakage": {
+        "maxMatch": 78,
+        "flagged": true
+      }
+    }
+  ],
+  "excluded": [
+    {
+      "number": 2108,
+      "title": "docs(contributing): limit compat fixes to inputs Lodash's types allow or real code passes",
+      "author": "raon0211",
+      "reason": "no-code"
+    },
+    {
+      "number": 2107,
+      "title": "docs: limit compat fixes to inputs Lodash's types allow or real code passes",
+      "author": "raon0211",
+      "reason": "no-code"
+    },
+    {
+      "number": 2093,
+      "title": "test: update bundle size snapshots",
+      "reason": "bot"
+    }
+  ],
+  "overlaps": [
+    {
+      "file": "src/compat/string/words.ts",
+      "prs": [
+        2103,
+        2102,
+        2110
+      ]
+    },
+    {
+      "file": "src/string/dedent.ts",
+      "prs": [
+        2100,
+        2099
+      ]
+    }
+  ],
+  "githubRequests": 33,
+  "hash": "8a07d3254a975389996e5192d181e88129fec36e1a88cc4e077dee0e92011d97"
+}
