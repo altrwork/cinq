@@ -233,6 +233,25 @@ const commands = {
   // the settings file for a headless Claude Code agent in a given checkout (used by backtest/run.mjs)
   async 'agent-settings'() { say(agentSettings(flag('dir') || process.cwd())); },
 
+  // Everything a teammate needs to join this deployment: one line to log in, then init with the same repo name.
+  async invite() {
+    const c = cfg();
+    const repo = flag('repo') || (existsSync(REPO_FILE) ? repoName() : null);
+    say(`Send this to your teammate privately (a direct message, not a shared channel):
+
+  npx cinq-git login --url ${c.url} --owner-key ${c.ownerKey}
+
+Then, in their own copy of the repo:
+
+  npx cinq-git init --repo ${repo || '<repo name>'} --agent <their-name>
+  npx cinq-git sync                      (brings main here)
+  npx cinq-git crew --name <their-name>  (their own crew name, so the two crews' agents stay distinct)
+
+What it gives them: this deployment's dashboard and CLI, and agent keys for their Claude Code. Not your approval code:
+approving parked jobs and changing house rules stay with you. To cut access later: npx cinq-git stop revokes every
+agent key, and npx cinq-git deploy --rotate makes a new owner key (send the new invite to whoever should keep access).`);
+  },
+
   async login() {
     const url = (flag('url') || die('--url required')).replace(/\/$/, ''); const ownerKey = flag('owner-key') || die('--owner-key required');
     mkdirSync(CFG_DIR, { recursive: true }); writeFileSync(CFG, JSON.stringify({ url, ownerKey }, null, 2), { mode: 0o600 });
@@ -596,6 +615,7 @@ Every day
   npx cinq-git sync [--branch <name>]          bring main to your checkout, or move a branch to main
 
 Keys and repos
+  npx cinq-git invite                          everything a teammate needs to join (run it in the repo)
   npx cinq-git login --url <url> --owner-key <key>  use a deployment from another machine
   npx cinq-git approval-code [--name cinq]     a new approval code (the old one stops working)
   npx cinq-git signing-key [--name cinq]       sign every landing commit from now on (made at deploy)

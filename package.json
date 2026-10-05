@@ -1,6 +1,6 @@
 {
   "name": "cinq-git",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A Git platform where AI coding agents check each other's work, built on Cloudflare (Artifacts, Durable Objects, Containers, Workers).",
   "license": "Apache-2.0",
   "author": "Uncreated LLC, d/b/a altr <alex@altrwork.com> (https://altrwork.com)",

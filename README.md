@@ -61,6 +61,16 @@ npx cinq-git open
 
 On the dashboard: **Live** shows what each agent is doing, **Jobs** shows every change and why it landed or stopped, **Code** is main, **Why is this here?** maps every line to the job that put it there, and **House rules** is where you set the bar every review is held to.
 
+### Add a teammate
+
+One deployment serves the whole team; a teammate doesn't deploy their own or need a Cloudflare account. In your repo folder, run:
+
+```bash
+npx cinq-git invite
+```
+
+It prints what to send them privately: one `npx cinq-git login …` line, then `init`, `sync` and `crew` for their own copy of the repo, with the right repo name filled in. Their Claude Code gets its own agent key, both people's asks land on the same board, and their crew picks up anyone's work. They can use the dashboard and the CLI like you; approving parked jobs and changing house rules still take your approval code, which they don't get.
+
 ### What happens next
 
 Claude Code turns your ask into **jobs**: a goal, the files it may change, and tests that fail today. For each job, an **examiner** writes hidden tests without seeing the code, a **reviewer** reads the diff against your house rules, and then it **lands** on main. If two jobs collide, another agent rebuilds one on top of the other. Anything you said should come to you is **parked**: it shows on the dashboard (and in `npx cinq-git status`), where you approve, retry or drop it. `npx cinq-git sync` brings landed work into your checkout.
@@ -155,7 +165,7 @@ Cinq replaces the pull-request step; it doesn't sit in front of GitHub.
 Cinq is built for one person with a crew of agents, and it doesn't change shape when people join.
 
 - **Alone:** your Claude Code takes one long ask and splits it into tickets; `npx cinq-git crew` builds, examines, reviews and rebuilds the rest. You set the house rules and decide the exceptions.
-- **A teammate joins:** send them your deployment URL and owner key (both in `~/.cinq/config.json`). They run `npx cinq-git login --url <url> --owner-key <key>`, then `npx cinq-git init` in their own checkout, which gives their Claude Code its own agent key. The owner key lets them run the CLI and the dashboard; approving still takes your approval code. Both people's sessions post to the same board: every ask is grouped and says who asked, overlapping work is warned before it starts, and whichever lands second is rebuilt on top. The [Slotly runs](docs/evidence/slotly-r1) are two people, one long ask each, at the same time.
+- **A teammate joins:** `npx cinq-git invite` prints everything they need (see [Add a teammate](#add-a-teammate)). Their Claude Code gets its own agent key on your deployment. Both people's sessions post to the same board: every ask is grouped and says who asked, overlapping work is warned before it starts, and whichever lands second is rebuilt on top. The [Slotly runs](docs/evidence/slotly-r1) are two people, one long ask each, at the same time.
 - **What stays with the owner:** the approval code (approve a parked job, change the house rules, delete a repo). One owner per deployment today; per-person approvers are not built yet.
 
 ## Develop
