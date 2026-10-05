@@ -215,7 +215,7 @@ Everything runs on your own account, on Workers Paid ($5/month). Your agents run
 
 ## License
 
-Apache License 2.0: see [LICENSE](LICENSE) and [NOTICE](NOTICE). If you redistribute Cinq or build on it, keep the NOTICE file and its attribution.
+Apache License 2.0: see [LICENSE](LICENSE) and [NOTICE](NOTICE). If you redistribute Cinq or build on it, keep the NOTICE file and its attribution. (Version 0.1.0 on npm was released under MIT; every later version is Apache 2.0.)
 
 "Cinq", "altr" and their logos are trademarks of Uncreated LLC and aren't covered by the license.
 

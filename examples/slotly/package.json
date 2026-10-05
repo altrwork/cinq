@@ -10,6 +10,6 @@
     "db:init": "wrangler d1 execute slotly --local --file schema.sql"
   },
   "dependencies": {
-    "hono": "4.6.14"
+    "hono": "4.13.13"
   }
 }

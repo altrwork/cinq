@@ -5,7 +5,7 @@ Each entry: what was decided, what lost, and what would reverse it.
 ## 1. Ship the intent, not the diff
 The unit of change is a **job (intent)**: a goal, the files it may change, and tests that fail on today's code. The diff is disposable. When main moves under a change, or a change breaks a job that already landed, a *different* agent rebuilds it from its goal on a fresh fork, and it lands only if every gate passes.
 - **Overlap is warned, not locked.** A job whose files another open job already changes gets the list at registration; the agent narrows its files, picks other work, or goes ahead and whichever lands second is rebuilt. Locking files would serialize exactly the work that usually merges cleanly.
-- **Lost:** leases plus a merge queue plus receipts (all prior art; leases are pessimistic locking); speculative trunks on forks (low originality).
+- **Lost:** leases plus a merge queue plus receipts (all prior art; leases are pessimistic locking); speculative trunks on forks (also prior art).
 - **Not built:** proactive invalidation when a contract changes. Only the reactive path exists: a landing that breaks an already-landed job's tests returns `breaks-dependents`, and that job is rebuilt on top. A change that breaks more than one landed job parks.
 
 ## 2. One Durable Object per repo, one lander per repo
@@ -15,12 +15,12 @@ The unit of change is a **job (intent)**: a goal, the files it may change, and t
 - **Reverse if:** the lander can't keep up (landing is serial: ~2–4 a minute on a small repo with every landing reviewed).
 
 ## 3. Agents regulate themselves
-Agents register jobs themselves from your normal request (instructions installed by `cinq init`). Trust comes from separation of duties, not human approval: the author never has the final say, an examiner writes hidden tests from the goal alone, and a reviewer reads the diff. You're contacted only for exceptions.
+Agents register jobs themselves from your normal request (instructions installed by `npx cinq-git init`). Trust comes from separation of duties, not human approval: the author never has the final say, an examiner writes hidden tests from the goal alone, and a reviewer reads the diff. You're contacted only for exceptions.
 - **Lost:** human approval of every job (it interrupts the agent's flow and adds little).
 - **Reverse if:** examiner-written hidden tests catch materially fewer bad changes than human-written ones. Measured on Hono: 14 of 18 planted bugs vs 16 for the maintainers' own tests, 0 false alarms.
 
 ## 4. Artifacts is the system of record
-Landing on main is final; there is no second approval elsewhere. `cinq init` imports a repo once and `cinq sync` pulls main back.
+Landing on main is final; there is no second approval elsewhere. `npx cinq-git init` imports a repo once and `npx cinq-git sync` pulls main back.
 - **Not built:** importing direct pushes to GitHub through the same gates (the GitHub mirror: see 9).
 
 ## 5. Agent code never touches the push
@@ -40,7 +40,7 @@ After every gate passes, the job waits for a `review` work order claimed by your
 - **Reverse if:** reviewers block correct changes often enough that the park rate climbs (then default to `advisory`).
 
 ## 8. A person decides parked jobs, one commit at a time
-A parked job waits for its owner: approve, retry with a note, or drop (web home or `cinq decide`). Approval waves through only the security gate the job hit, only for the exact commit that hit it, and an agent still reviews it; the receipt records who approved what. A job parked for failing twice can only be retried or dropped.
+A parked job waits for its owner: approve, retry with a note, or drop (web home or `npx cinq-git decide`). Approval waves through only the security gate the job hit, only for the exact commit that hit it, and an agent still reviews it; the receipt records who approved what. A job parked for failing twice can only be retried or dropped.
 - **Lost:** an override that lands without review (a person approving a gate is not a code review).
 - **Approval code:** approving, changing the house rules, deleting a repo and re-importing a deleted one need a code shown once at deploy and stored only as a hash in the deployment, so an agent holding only the owner key can't approve its own parked change or rewrite main by deleting and re-importing it.
 - **Owner key:** it can create a repo and import its history (until the first hand-in, at most 30 minutes), mint agent keys, retry or drop parked jobs. It cannot approve one, and it cannot read an open job's hidden tests.

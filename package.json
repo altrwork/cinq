@@ -32,7 +32,7 @@
     "!app/web/dev-server.mjs"
   ],
   "engines": {
-    "node": ">=22"
+    "node": ">=22.13"
   },
   "repository": {
     "type": "git",

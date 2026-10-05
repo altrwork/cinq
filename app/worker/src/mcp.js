@@ -20,10 +20,13 @@ export function createServer({ agent, env, defaultRepo }) {
   // An agent key is bound to the repo it was created for, so agents never need to name it.
   const repoStub = (repo) => {
     if (defaultRepo && repo && repo !== defaultRepo) throw new Error(`this agent key is for repo ${defaultRepo}, not ${repo}`); // a key never reaches another repo
-    return env.REPO.get(env.REPO.idFromName(repo || defaultRepo || env.DEFAULT_REPO));
+    const name = repo || defaultRepo;
+    // the owner key is bound to no repo: it names one, and a name that can't be a repo never creates an object
+    if (!/^[a-z0-9][a-z0-9-]{0,39}$/.test(name || '')) throw new Error('name the repo (repo: "<name>")');
+    return env.REPO.get(env.REPO.idFromName(name));
   };
-  const repoArg = { repo: z.string().optional().describe('Repo name (defaults to this deployment\'s repo)') };
-  const server = new McpServer({ name: 'cinq', version: '0.1.0' });
+  const repoArg = { repo: z.string().optional().describe('Repo name (an agent key already knows its repo)') };
+  const server = new McpServer({ name: 'cinq', version: '0.1.1' });
 
   server.registerTool('propose_intent', {
     description: `Register the job you are about to do, before writing code. ${HOW}\nkind "change" needs tests that FAIL on today's main (they prove the change); kind "keep" is for refactors where existing tests must keep passing. Call list_intents first: if another open job already changes your files, the reply warns you (overlaps); narrow your files, pick other work, or go ahead knowing whichever lands second is rebuilt on top. Returns your claim: a fork remote to clone, push to its main, then call submit.`,

@@ -235,6 +235,13 @@ export class RepoDO extends DurableObject {
 
   async alarm() {
     if (!this.repo) return;
+    // a throw (Artifacts unreachable, a bug) must not end the loop: the next tick tries again
+    try { await this.tick(); } catch (e) {
+      this.engine.event('alarm.failed', { data: { error: String(e?.message || e).slice(0, 300) } });
+      await this.ctx.storage.setAlarm(Date.now() + TICK_MS);
+    }
+  }
+  async tick() {
     await this.ensureTrunkToken();
     this.engine.sweep();
     // One landing per alarm, so a long queue never runs into the alarm's time limit; the next alarm follows at once.

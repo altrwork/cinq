@@ -188,7 +188,7 @@ const commands = {
       containers: [{ class_name: 'Lander', image: 'docker.io/library/node:22', max_instances: +(flag('max-landers') || 6), instance_type: flag('lander-size') || 'basic' }],
       durable_objects: { bindings: [{ name: 'LANDER', class_name: 'Lander' }, { name: 'REPO', class_name: 'RepoDO' }, { name: 'ACCOUNT', class_name: 'AccountDO' }] },
       migrations: [{ tag: 'v1', new_sqlite_classes: ['Lander'] }, { tag: 'v2', new_sqlite_classes: ['RepoDO', 'AccountDO'] }],
-      vars: { ACCOUNT_ID: accountId, NAMESPACE: name, DEFAULT_REPO: 'demo', PUBLIC_READ: '0', ...(has('dev-scenarios') ? { DEV_SCENARIOS: '1' } : {}), ...(flag('lease-seconds') ? { LEASE_SECONDS: String(+flag('lease-seconds')) } : {}) },
+      vars: { ACCOUNT_ID: accountId, NAMESPACE: name, PUBLIC_READ: '0', ...(has('dev-scenarios') ? { DEV_SCENARIOS: '1' } : {}), ...(flag('lease-seconds') ? { LEASE_SECONDS: String(+flag('lease-seconds')) } : {}) },
       assets: { directory: '../web', binding: 'ASSETS', run_worker_first: true, not_found_handling: 'single-page-application' },
       rules: [{ type: 'Text', globs: ['**/lander/*.cjs'], fallthrough: false }], observability: { enabled: true },
     };

@@ -34,6 +34,7 @@ const SCHEMA = [
      lease_until INTEGER, fork_name TEXT, fork_url TEXT, state TEXT, result TEXT, created INTEGER)`,
   `CREATE TABLE IF NOT EXISTS queue (seq INTEGER PRIMARY KEY AUTOINCREMENT, claim TEXT)`,
   `CREATE TABLE IF NOT EXISTS events (seq INTEGER PRIMARY KEY AUTOINCREMENT, ts INTEGER, type TEXT, intent TEXT, claim TEXT, agent TEXT, data TEXT)`,
+  `CREATE INDEX IF NOT EXISTS events_type ON events (type, seq)`,
   `CREATE TABLE IF NOT EXISTS asks (id TEXT PRIMARY KEY, text TEXT, agent TEXT, created INTEGER)`,
   `CREATE TABLE IF NOT EXISTS rules (version INTEGER PRIMARY KEY, body TEXT, hash TEXT, by TEXT, at INTEGER)`,
   `CREATE TABLE IF NOT EXISTS usage (id INTEGER PRIMARY KEY AUTOINCREMENT, agent TEXT, vendor TEXT, input INTEGER, cached INTEGER, output INTEGER,

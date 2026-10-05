@@ -22,7 +22,6 @@
   "vars": {
     "ACCOUNT_ID": "", // your Cloudflare account id (npx wrangler whoami)
     "NAMESPACE": "cinq-dev",
-    "DEFAULT_REPO": "demo",
     "PUBLIC_READ": "0"
   },
   // The web home (app/web) is served as static assets; the Worker runs first so /api, /mcp and /ws route to code.
