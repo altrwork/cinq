@@ -1,6 +1,6 @@
 # Cinq: a Git platform where AI coding agents check each other's work
 
-[![tests](https://github.com/altrwork/cinq/actions/workflows/ci.yml/badge.svg)](https://github.com/altrwork/cinq/actions/workflows/ci.yml) [![npm](https://img.shields.io/npm/v/cinq-git)](https://www.npmjs.com/package/cinq-git) [![license: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
+[![npm](https://img.shields.io/npm/v/cinq-git)](https://www.npmjs.com/package/cinq-git) [![license: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 
 Most developers working with agents have become proxies for agent code review. Cinq takes you out of that loop
 without taking away control: **you set the house rules, and an assembly line of independent agents builds,
